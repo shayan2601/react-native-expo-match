@@ -39,9 +39,9 @@ export default function ForgotPasswordScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+      {/* <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <Text style={styles.backButtonText}>{"<"}</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <Text style={styles.title}>Forgot Password?</Text>
       <Text style={styles.subtitle}>Don't worry! It occurs. Please enter the email address linked with your account.</Text>
       <TextInput
@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f8f8f8',
     alignItems: 'center',
+    marginTop: 90,
   },
   backButton: {
     alignSelf: 'flex-start',
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: '#b71c1c',
+    backgroundColor: 'maroon',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
