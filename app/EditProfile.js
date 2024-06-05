@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,14 +10,22 @@ export default function EditProfileScreen({  }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [nickName, setNickName] = useState('');
   const [password, setPassword] = useState('');
   // const [confirmPassword, setConfirmPassword] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
-  const [age, setAge] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [dob, setDob] = useState('');
   const [height, setHeight] = useState('');
   const [country, setCountry] = useState('');
   const [gender, setGender] = useState('');
   const [address, setAddress] = useState('');
+
+  const [about, setAbout] = useState('')
+  const [sect, setSect] = useState('')
+  const [tongue, setTongue] = useState('')
+  const [religion, setReligion] = useState('')
+  const [education, setEducation] = useState('')
+  const [cast, setCast] = useState('')
 
 
   useEffect(() => {
@@ -31,21 +39,40 @@ export default function EditProfileScreen({  }) {
                   'Authorization': `Bearer ${userToken}`,
                   'Content-Type': 'application/json'
                 }
-              });
-              const profileData = response.data?.data;
+              }).then((res)=> {
+                console.log("Res: ", res)
 
-              setFirstName(profileData.firstName || '');
-              setLastName(profileData.lastName || '');
-              setEmail(profileData.email || '');
-              setContactNumber(profileData.contactNumber || '');
-              setAge(profileData.age || '');
-              setHeight(profileData.height || '');
-              setCountry(profileData.country || '');
-              setGender(profileData.gender || '');
-              setAddress(profileData.address || '');
+                console.log("response: ", res)
+                const profileData = res?.data?.data[0];
+                console.log("profileData: ", profileData)
+                setFirstName(profileData?.firstName || '');
+                setLastName(profileData?.lastName || '');
+                setEmail(profileData?.email || '');
+                setNickName(profileData?.nickName || '');
+                setPhoneNumber(profileData?.phoneNumber || '');
+                setDob(profileData?.dob || '');
+                setHeight(`${profileData?.height.feet}'${profileData?.height.inches}` || '');
+                setCountry(profileData?.country || '');
+                setGender(profileData?.gender || '');
+                setAddress(profileData?.address || '');
+
+                setAbout(profileData?.about || '');
+                setSect(profileData?.sect || 'abc');
+                setReligion(profileData?.religion || '');
+                setCast(profileData?.cast || '');
+                setEducation(profileData?.education || '');
+                setTongue(profileData?.tongue || '');
+                
+                // If password and confirmPassword are also part of the fetched data
+                setPassword(profileData.password || '');
+              }).catch(async(err)=> {
+                if(err?.response?.data?.message == "Invalid/Expired token."){
+                  await AsyncStorage.clear()
+                  navigation.navigate('LoginScreen')
+                }
+                console.log("ERR: ", err)
+              });
               
-              // If password and confirmPassword are also part of the fetched data
-              setPassword(profileData.password || '');
           } catch (error) {
               console.error("Error fetching profile data", error);
           }
@@ -61,17 +88,29 @@ export default function EditProfileScreen({  }) {
         userId,
         firstName,
         lastName,
+        nickName,
         email,
-        password,
-        contactNumber,
-        age,
+        sect,
+        tongue,
+        education,
+        religion,
+        cast,
+        about,
+        phoneNumber,
+        dob,
         height,
         country,
         gender,
         address
       };
+      const userToken = await AsyncStorage.getItem('userToken');
 
-      const response = await axios.post('http://13.60.56.191:3001/api/user/profile/update', payload);
+      const response = await axios.put('http://13.60.56.191:3001/api/user/profile/update', payload, {
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'Content-Type': 'application/json'
+          }
+      });
       
       if (response.data.success) {
         Alert.alert('Success', 'Profile updated successfully');
@@ -109,13 +148,19 @@ export default function EditProfileScreen({  }) {
       <TextInput
         placeholderTextColor="#000"
         style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
+        placeholder="Nick Name"
+        value={nickName}
+        onChangeText={setNickName}
         autoCapitalize="none"
       />
       <TextInput
+        placeholderTextColor="#000"
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+      />
+      {/* <TextInput
         placeholderTextColor="#000"
         style={styles.input}
         placeholder="Password"
@@ -123,23 +168,23 @@ export default function EditProfileScreen({  }) {
         onChangeText={setPassword}
         secureTextEntry
         autoCapitalize="none"
-      />
+      /> */}
       
       <TextInput
         placeholderTextColor="#000"
         style={styles.input}
         placeholder="Contact Number"
-        value={contactNumber}
-        onChangeText={setContactNumber}
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
       />
       <View style={styles.inputRow}>
         <TextInput
           placeholderTextColor="#000"
           style={styles.inputHalf}
-          placeholder="Age"
-          value={age}
-          onChangeText={setAge}
+          placeholder="DOB"
+          value={dob}
+          onChangeText={setDob}
           keyboardType="numeric"
         />
         <TextInput
@@ -166,12 +211,51 @@ export default function EditProfileScreen({  }) {
           onChangeText={setGender}
         />
       </View>
+      <View style={styles.inputRow}>
+        <TextInput
+          placeholderTextColor="#000"
+          style={styles.inputHalf}
+          placeholder="Education"
+          value={education}
+          onChangeText={setEducation}
+        />
+        <TextInput
+          placeholderTextColor="#000"
+          style={styles.inputHalf}
+          placeholder="tongue"
+          value={tongue}
+          onChangeText={setTongue}
+        />
+      </View>
+      <View style={styles.inputRow}>
+        <TextInput
+          placeholderTextColor="#000"
+          style={styles.inputHalf}
+          placeholder="Religion"
+          value={religion}
+          onChangeText={setReligion}
+        />
+        <TextInput
+          placeholderTextColor="#000"
+          style={styles.inputHalf}
+          placeholder="Cast"
+          value={cast}
+          onChangeText={setCast}
+        />
+      </View>
       <TextInput
         placeholderTextColor="#000"
         style={styles.input}
         placeholder="Address"
         value={address}
         onChangeText={setAddress}
+      />
+      <TextInput
+        placeholderTextColor="#000"
+        style={styles.input}
+        placeholder="About"
+        value={about}
+        onChangeText={setAbout}
       />
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>

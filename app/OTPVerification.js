@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
-export default function OTPVerification({ route }) {
+export default function OTPVerification() {
   const [otp, setOtp] = useState(['', '', '', '']);
   const [error, setError] = useState('');
-  const { email } = route.params;
+  const navigation = useNavigation();
+
   const handleChange = (index, value) => {
     if (value.length <= 1) {
       const newOtp = [...otp];
@@ -15,12 +18,13 @@ export default function OTPVerification({ route }) {
   };
 
   const verifyOtp = async () => {
+    const email = await AsyncStorage.getItem("forgotPasswordEmail")
     const otpCode = otp.join('');
     if (otpCode.length !== 4) {
       setError('Please enter a valid 4-digit OTP.');
       return;
     }
-
+    console.log("otpCode: ", otpCode)
     try {
       const response = await axios.post('http://13.60.56.191:3001/api/user/verify-otp', {
         otp: otpCode,
@@ -31,7 +35,7 @@ export default function OTPVerification({ route }) {
         }
       }).then((res)=> {
         console.log("res: ", res)
-        navigation.navigate('ResetPassword', { email:email})
+        navigation.navigate('ResetPassword')
       });
 
       

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Button, Image, StyleSheet } from 'react-native';
+import { View, Button, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +12,8 @@ export default function LiveCamera() {
   const [imageBuffer, setImageBuffer] = useState(null);
   const [ doc, setDoc ] = useState();
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -49,7 +51,7 @@ export default function LiveCamera() {
   };
 
   const sendImage = async () => {
-
+    setIsLoading(true);
     if (!imageUri) {
         alert('No image selected.');
         return;
@@ -75,10 +77,17 @@ export default function LiveCamera() {
             },
         }).then((res)=> {
             console.log("RES:: ", res?.data?.data)
-            if(res?.data?.data?.samePerson == true){
+            setIsLoading(false);
+            if (res?.data?.data?.samePerson == true) {
+              console.log("HEREEEE", res?.data?.data?.samePerson)
               navigation.navigate('ProfileVerifiedScreen');
+            } else {
+              console.log("SHuld not here")
+                setErrorMessage("Face doesn't match, please verify again.");
             }
         }).catch((err)=> {
+            setIsLoading(false);
+            setErrorMessage("Face doesn't match, please verify again!");
             console.log("ERR: ", err)
         });
 
@@ -94,14 +103,48 @@ export default function LiveCamera() {
       {imageUri && (
         <>
           <Image source={{ uri: imageUri }} style={styles.image} />
-          <Button title="Verify" onPress={sendImage} />
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#000" />
+          ) : (
+            <>
+              <TouchableOpacity style={styles.loginButton} onPress={sendImage} disabled={isLoading}>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color="#FFF" />
+                  ) : (
+                    <Text style={styles.loginButtonText}>Verify</Text>
+                  )}
+              </TouchableOpacity>
+              {errorMessage ? (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorMessage}>{errorMessage}</Text>
+                </View>
+              ) : null}
+            </>
+          )}
         </>
       )}
+      <Button title="Go to Register" onPress={() => navigation.navigate('RegisterScreen')} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  button: {
+    marginTop: 20,
+  },
+  loginButton: {
+    backgroundColor: 'maroon',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 20
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    paddingHorizontal:60
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -111,5 +154,14 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginTop: 20,
+  },
+  errorContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  errorMessage: {
+    color: 'red',
+    marginBottom: 10,
+    textAlign: 'center',
   },
 });

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ResetPassword({ route }) {
+export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const { email } = route.params;
+  const navigation = useNavigation();
 
   const handleResetPassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -15,6 +17,7 @@ export default function ResetPassword({ route }) {
     }
 
     try {
+      const email = await AsyncStorage.getItem("forgotPasswordEmail")
       const response = await axios.post('http://13.60.56.191:3001/api/user/reset-password', {
         email: email,
         password: newPassword,

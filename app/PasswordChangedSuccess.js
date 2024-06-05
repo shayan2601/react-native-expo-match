@@ -1,8 +1,10 @@
 // PasswordChangedScreen.js
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-const PasswordChangedSuccess = ({ navigation }) => {
+const PasswordChangedSuccess = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
@@ -15,7 +17,7 @@ const PasswordChangedSuccess = ({ navigation }) => {
       <Text style={styles.subtitle}>Your password has been changed successfully.</Text>
       <TouchableOpacity 
         style={styles.button} 
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate('LoginScreen')}
       >
         <Text style={styles.buttonText}>Back to Login</Text>
       </TouchableOpacity>

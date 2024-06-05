@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, TouchableOpacity, Text, Image, Button, Platform } from 'react-native';
+import { View, TouchableOpacity, Text, Image, Button, Platform, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import * as DocumentPicker from 'expo-document-picker';
 const UploadImageScreen = ({}) => {
 
     const [data, setData] = useState()
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -98,7 +99,7 @@ const UploadImageScreen = ({}) => {
         
     // };
     const onNextPressed = async () => {
-
+        setIsLoading(true)
         console.log("data::: ", data)
         try {        
             console.log("file: ", file)
@@ -140,10 +141,11 @@ const UploadImageScreen = ({}) => {
                 console.log('Response:', res?.data);
                 await AsyncStorage.removeItem('registerUserData');
                 await AsyncStorage.setItem('registerUserData', JSON.stringify(res?.data));
-
+                setIsLoading(false)
                 navigation.navigate('LiveCamera')
                 // return res; // Ensure to return the response to assign it to 'response'
             }).catch((err) => {
+                setIsLoading(false)
                 console.log('Error:', err);
             });
             
@@ -165,9 +167,15 @@ const UploadImageScreen = ({}) => {
             </View>
             )}
         </TouchableOpacity>
-        <Button title="Next" onPress={onNextPressed} style={styles.button}>
-            Next
-        </Button>
+
+        <TouchableOpacity style={styles.loginButton} onPress={onNextPressed} disabled={isLoading}>
+            {isLoading ? (
+            <ActivityIndicator size="small" color="#FFF" />
+            ) : (
+            <Text style={styles.loginButtonText}>Login</Text>
+            )}
+        </TouchableOpacity>
+        
         </View>
     );
 };
@@ -177,6 +185,17 @@ const styles = {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loginButton: {
+    backgroundColor: 'maroon',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   backButton: {
     position: 'absolute',

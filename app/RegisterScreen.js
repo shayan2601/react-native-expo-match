@@ -12,7 +12,7 @@ export default function App() {
   const [password, setPassword] = useState({ value: '', error: '' });
   const [confirmPassword, setConfirmPassword] = useState({ value: '', error: '' });
   const [phoneNumber, setPhoneNumber] = useState({ value: '', error: '' });
-  const [age, setAge] = useState({ value: '', error: '' });
+  const [dob, setDob] = useState({ value: '', error: '' });
   const [height, setHeight] = useState({ value: '', error: '' });
   const [country, setCountry] = useState({ value: '', error: '' });
   const [gender, setGender] = useState({ value: '', error: '' });
@@ -42,7 +42,7 @@ export default function App() {
       password: password.value,
       confirmPassword: confirmPassword.value,
       phoneNumber: phoneNumber.value,
-      age: age.value,
+      dob: dob.value,
       height: height.value,
       country: country.value,
       gender: gender.value,
@@ -119,11 +119,10 @@ export default function App() {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputHalf}
-          placeholder="Age"
+          placeholder="DOB"
           placeholderTextColor="#000"
-          keyboardType="numeric"
-          value={age.value}
-          onChangeText={handleChange(setAge)}
+          value={dob.value}
+          onChangeText={handleChange(setDob)}
         />
         <TextInput
           style={styles.inputHalf}

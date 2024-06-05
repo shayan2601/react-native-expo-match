@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ForgotPasswordScreen({ navigation }) {
+export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const navigation = useNavigation();
 
   const sendCode = async () => {
     if (!email) {
@@ -19,9 +22,10 @@ export default function ForgotPasswordScreen({ navigation }) {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then((res)=> {
+      }).then(async(res)=> {
         console.log("RES: ", res)
-        navigation.navigate('OTPVerification', { email:email})
+        await AsyncStorage.setItem("forgotPasswordEmail", email)
+        navigation.navigate('OTPVerification')
       }).catch((err)=> {
         console.log("ERRL: ", err)
       });

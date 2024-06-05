@@ -8,27 +8,30 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-const ProfileCard = ({ profile }) => {
+const ProfileCard = ({ profile, onPress }) => {
     return (
-        <View style={styles.card}>
-            <Image source={{ uri: profile.image }} style={styles.image} />
-            <View style={styles.info}>
-            <Text style={styles.name}>{profile.name}</Text>
-            <Text style={styles.details}>{profile.age}, {profile.height} '{profile.language},</Text>
-            <Text style={styles.details}>{profile.status},</Text>
-            <Text style={styles.details}>{profile.city}, {profile.state}</Text>
+        <TouchableOpacity onPress={onPress}>
+            <View style={styles.card}>
+                <Image source={{ uri: `http://13.60.56.191:3001/uploads/${profile?.image}` }} style={styles.image} />
+                <View style={styles.info}>
+                    <Text style={styles.name}>{profile.firstName}</Text>
+                    <Text style={styles.nameLight}>{profile.lastName}</Text>
+                    <Text style={styles.details}>{Math.floor(profile.age)}, {profile.heightFeet}'{profile.heightInches}, {profile.language}</Text>
+                    <Text style={styles.details}>{profile.gender}</Text>
+                    <Text style={styles.details}>{profile.address} {profile.state}</Text>
+                </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
 const App = () => {
     const [search, setSearch] = useState('');
-    const [filteredProfiles, setFilteredProfiles] = useState(profiles);
     const [filterModalVisible, setFilterModalVisible] = useState(false);
-    const [ageRange, setAgeRange] = useState([18, 29]);
-    const [heightRange, setHeightRange] = useState([4, 5.5]);
+    const [ageRange, setAgeRange] = useState(["18", "70"]);
+    const [heightRange, setHeightRange] = useState([6, 9.5]);
     const [profiles, setProfiles] = useState([]);
+    const [filteredProfiles, setFilteredProfiles] = useState(profiles);
 
     const [loading, setLoading] = useState(true);
 
@@ -37,19 +40,33 @@ const App = () => {
             try {
                 const userToken = await AsyncStorage.getItem('userToken');
                 const userId = await AsyncStorage.getItem('userId');
-                await axios.get(`http://13.60.56.191:3001/api/friends/all/${userId}?page=1&pageSize=1`, {
+                let payload = {
+                    startAge: ageRange[0],
+                    endAge: ageRange[1],
+                    religion: 'islam',
+                    country: 'pakistan',
+                    gender: 'male',
+                    sect: 'muslim',
+                    cast: 'siddiqui',
+                    height: "6'6",
+                    tongue: 'urdu'
+                }
+                await axios.post(`http://13.60.56.191:3001/api/search/profile`,payload, {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 },
                 }).then((response)=> {
-                    console.log("RES: ", response?.data?.data?.data)
-                    const friendsData = response?.data?.data?.data?.map(friend => ({
+                    console.log("RES: ", response?.data?.data?.profiles)
+                    const friendsData = response?.data?.data?.profiles?.map(friend => ({
                         id: friend?._id,
-                        name: friend?.name,
+                        firstName: friend?.firstName,
                         lastName: friend?.lastName,
                         age: friend?.age,
-                        height: friend?.height,
-                        language: friend?.language,
+                        about: friend?.about,
+                        heightFeet: friend?.height?.feet,
+                        heightInches: friend?.height?.inches,
+                        language: friend?.tongue,
+                        address: friend?.address,
                         status: friend?.status,
                         city: friend?.city,
                         state: friend?.state,
@@ -57,7 +74,11 @@ const App = () => {
                     }));
                     setProfiles(friendsData);
                     setFilteredProfiles(friendsData);
-                }).catch((err)=> {
+                }).catch(async(err)=> {
+                    if(err?.response?.data?.message == "Invalid/Expired token."){
+                        await AsyncStorage.clear()
+                        navigation.navigate('LoginScreen')
+                    }
                     console.log("ERR: ", err)
                 });
                 
@@ -92,6 +113,8 @@ const App = () => {
         await AsyncStorage.setItem('selectedUserId', userId);
         navigation.navigate('DetailScreen');
     };
+
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -264,6 +287,10 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    nameLight: {
+        fontSize: 14,
+        color: 'gray'
     },
     details: {
         fontSize: 14,

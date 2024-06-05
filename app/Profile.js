@@ -18,8 +18,15 @@ const ProfileScreen = () => {
                     'Authorization': `Bearer ${userToken}`,
                     'Content-Type': 'application/json'
                     }
+                }).then((res)=> {
+                
+                    setProfileData(res.data?.data[0]);
+                }).catch(async(err)=> {
+                    if(err?.response?.data?.message == "Invalid/Expired token."){
+                        await AsyncStorage.clear()
+                        navigation.navigate('LoginScreen')
+                    }
                 });
-                setProfileData(response.data?.data);
             } catch (error) {
                 console.error("Error fetching profile data", error);
                 // Set dummy data when request fails
@@ -56,29 +63,47 @@ const ProfileScreen = () => {
         <View style={styles.header}>
             <Image 
             style={styles.profileImage} 
-            source={{ uri: 'https://via.placeholder.com/150' }} 
+            source={{ uri: `http://13.60.56.191:3001/uploads/${profileData?.image}` }} 
             />
-            <Text style={styles.name}>{profileData.name}</Text>
-            <Text style={styles.age}>{profileData.age} Years</Text>
-            <Text style={styles.title}>{profileData.title}</Text>
+            <Text style={styles.name}>{profileData?.firstName}</Text>
+            <Text style={styles.age}>{Math.floor(profileData?.age)} Years</Text>
+            <Text style={styles.title}>{profileData?.title}</Text>
             <TouchableOpacity style={styles.requestButton}>
-            <Text style={styles.requestButtonText}>Request +</Text>
+            {/* <Text style={styles.requestButtonText}>Request +</Text> */}
             </TouchableOpacity>
         </View>
         <View style={styles.profileSection}>
             <Text style={styles.profileHeading}>Profile :</Text>
-            <Text style={styles.profileText}>{profileData.description}</Text>
+            <Text style={styles.profileText}>{profileData?.description}</Text>
         </View>
         <View style={styles.detailsSection}>
-            <Text style={styles.detailItem}><Text style={styles.detailHeading}>Cast :</Text> {profileData.cast}</Text>
-            <Text style={styles.detailItem}><Text style={styles.detailHeading}>Height :</Text> {profileData.height}</Text>
-            <Text style={styles.detailItem}><Text style={styles.detailHeading}>Mother Tongue :</Text> {profileData.motherTongue}</Text>
-            <Text style={styles.detailItem}><Text style={styles.detailHeading}>Profession :</Text> {profileData.profession}</Text>
-            <Text style={styles.detailItem}><Text style={styles.detailHeading}>Nationality :</Text> {profileData.nationality}</Text>
-            <Text style={styles.detailItem}><Text style={styles.detailHeading}>Home Town :</Text> {profileData.homeTown}</Text>
-            <Text style={styles.detailItem}><Text style={styles.detailHeading}>Religion :</Text> {profileData.religion}</Text>
-            <Text style={styles.detailItem}><Text style={styles.detailHeading}>Education :</Text> {profileData.education}</Text>
+            <Text style={styles.detailItem}>
+                <Text style={styles.detailHeading}>Cast :</Text> {profileData?.cast || 'Unknown'}
+            </Text>
+            <Text style={styles.detailItem}>
+                <Text style={styles.detailHeading}>Height :</Text> 
+                {profileData?.height?.feet || '0'}' {profileData?.height?.inches || '0'}
+            </Text>
+            <Text style={styles.detailItem}>
+                <Text style={styles.detailHeading}>Mother Tongue :</Text> {profileData?.tongue || 'Unknown'}
+            </Text>
+            <Text style={styles.detailItem}>
+                <Text style={styles.detailHeading}>Profession :</Text> {profileData?.profession || 'Computer Science'}
+            </Text>
+            <Text style={styles.detailItem}>
+                <Text style={styles.detailHeading}>Nationality :</Text> {profileData?.nationality || 'Pakistan'}
+            </Text>
+            <Text style={styles.detailItem}>
+                <Text style={styles.detailHeading}>Home Town :</Text> {profileData?.homeTown || 'Lahore'}
+            </Text>
+            <Text style={styles.detailItem}>
+                <Text style={styles.detailHeading}>Religion :</Text> {profileData?.religion || 'Unknown'}
+            </Text>
+            <Text style={styles.detailItem}>
+                <Text style={styles.detailHeading}>Education :</Text> {profileData?.education || 'Unknown'}
+            </Text>
         </View>
+
         </ScrollView>
     );
 };

@@ -13,7 +13,7 @@ export default function RegisterScreenPersonalInfo() {
     password: '',
     confirmPassword: '',
     phoneNumber: '',
-    age: '',
+    dob: '',
     height: '',
     country: '',
     gender: '',
@@ -44,6 +44,7 @@ export default function RegisterScreenPersonalInfo() {
   const [occupation, setOccupation] = useState({ value: '', error: '' });
   const [bio, setBio] = useState({ value: '', error: '' });
   const [consent, setConsent] = useState(false);
+  const [sect, setSect] = useState({ value: '', error: '' });
 
 
   const navigation = useNavigation();
@@ -65,13 +66,14 @@ export default function RegisterScreenPersonalInfo() {
         password: userData.password,
         confirmPassword: userData.confirmPassword,
         phoneNumber: userData.phoneNumber,
-        age: userData.age,
+        dob: userData.dob,
         height: userData.height,
         country: userData.country,
         address: userData.address,
         gender: userData.gender,
         religion: religion.value,
         cast: cast.value,
+        sect: sect.value,
         tongue: tongue.value,
         community: community.value,
         education: education.value,
@@ -112,6 +114,13 @@ export default function RegisterScreenPersonalInfo() {
           onChangeText={handleChange(setCast)}
         />
       </View>
+      <TextInput
+        style={styles.input}
+        placeholder="Sect"
+        placeholderTextColor="#000"
+        value={sect.value}
+        onChangeText={handleChange(setSect)}
+      />
       <TextInput
         style={styles.input}
         placeholder="Tongue"

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
@@ -9,8 +9,12 @@ export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const handleLogin = async() => {
+    setIsLoading(true);
+
     await axios.post('http://13.60.56.191:3001/api/user/login', {
         email: email,
         password: password,
@@ -21,17 +25,20 @@ export default function App() {
       }).then(async(res)=>{
         console.log("RES: ", res.data.data)
         try {
-
-    
           await AsyncStorage.setItem('userToken', res.data.data.token);
           await AsyncStorage.setItem('userId', res.data.data.userId);
           await AsyncStorage.setItem('userEmail', res.data.data.email);
     
           navigation.navigate('Dashboard');
+          setIsLoading(false);
         } catch (error) {
           console.error('Error parsing JSON:', error);
+          setIsLoading(false);
+        } finally {
+          setIsLoading(false);
         }
       }).catch((error) => {
+        setIsLoading(false);
         console.log("ERR: ", error)
       });
   };
@@ -64,8 +71,12 @@ export default function App() {
       <TouchableOpacity>
         <Text onPress={() => navigation.navigate('ForgotPasswordScreen')} style={styles.forgotPassword}>Forgot Password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Login</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={isLoading}>
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#FFF" />
+        ) : (
+          <Text style={styles.loginButtonText}>Login</Text>
+        )}
       </TouchableOpacity>
       <Text style={styles.registerText}>
         Don’t have an account? <Text onPress={() => navigation.navigate('RegisterScreen')} style={styles.registerNow}>Register Now</Text>
