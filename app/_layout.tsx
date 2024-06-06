@@ -16,7 +16,7 @@ export default function RootLayout() {
       <Stack.Screen name="OTPVerification" />
       <Stack.Screen name="ResetPassword" />
       <Stack.Screen name="PasswordChangedSuccess" />
-      <Stack.Screen name="EditProfile" />
+      <Stack.Screen name="EditProfile" options={{ headerShown: false }}/>
       <Stack.Screen name="Dashboard" options={{ headerShown: false }}/>
       <Stack.Screen name="Profile" />
       <Stack.Screen name="Message" />

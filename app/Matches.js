@@ -28,84 +28,76 @@ const ProfileCard = ({ profile, onPress }) => {
 const App = () => {
     const [search, setSearch] = useState('');
     const [filterModalVisible, setFilterModalVisible] = useState(false);
-    const [ageRange, setAgeRange] = useState(["18", "70"]);
-    const [heightRange, setHeightRange] = useState([6, 9.5]);
+    const [ageRange, setAgeRange] = useState(["18", "40"]);
+    const [heightRange, setHeightRange] = useState([6, 6]);
+    const [tongue, setTongue] = useState('urdu');
+    const [cast, setCast] = useState('siddiqui');
     const [profiles, setProfiles] = useState([]);
     const [filteredProfiles, setFilteredProfiles] = useState(profiles);
 
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchProfiles = async () => {
-            try {
-                const userToken = await AsyncStorage.getItem('userToken');
-                const userId = await AsyncStorage.getItem('userId');
-                let payload = {
-                    startAge: ageRange[0],
-                    endAge: ageRange[1],
-                    religion: 'islam',
-                    country: 'pakistan',
-                    gender: 'male',
-                    sect: 'muslim',
-                    cast: 'siddiqui',
-                    height: "6'6",
-                    tongue: 'urdu'
-                }
-                await axios.post(`http://13.60.56.191:3001/api/search/profile`,payload, {
+    const fetchProfiles = async () => {
+        try {
+            const userToken = await AsyncStorage.getItem('userToken');
+            const userId = await AsyncStorage.getItem('userId');
+            let payload = {
+                startAge: ageRange[0],
+                endAge: ageRange[1],
+                religion: 'islam',
+                country: 'pakistan',
+                gender: 'male',
+                sect: 'muslim',
+                cast: cast === 'siddiqui' ? "siddiqui" : cast,
+                height: `${heightRange[0]}'${heightRange[1]}"`,
+                tongue: tongue === 'urdu' ? "urdu" : tongue
+            }
+            await axios.post(`http://13.60.56.191:3001/api/search/profile`, payload, {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 },
-                }).then((response)=> {
-                    console.log("RES: ", response?.data?.data?.profiles)
-                    const friendsData = response?.data?.data?.profiles?.map(friend => ({
-                        id: friend?._id,
-                        firstName: friend?.firstName,
-                        lastName: friend?.lastName,
-                        age: friend?.age,
-                        about: friend?.about,
-                        heightFeet: friend?.height?.feet,
-                        heightInches: friend?.height?.inches,
-                        language: friend?.tongue,
-                        address: friend?.address,
-                        status: friend?.status,
-                        city: friend?.city,
-                        state: friend?.state,
-                        image: friend?.image, // Ensure the image URL is correctly provided in the API response
-                    }));
-                    setProfiles(friendsData);
-                    setFilteredProfiles(friendsData);
-                }).catch(async(err)=> {
-                    if(err?.response?.data?.message == "Invalid/Expired token."){
-                        await AsyncStorage.clear()
-                        navigation.navigate('LoginScreen')
-                    }
-                    console.log("ERR: ", err)
-                });
-                
-                
-            } catch (error) {
-                console.error('Error fetching friends data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-    
-        fetchProfiles();
-    }, []);
-
-    const handleSearch = (text) => {
-        setSearch(text);
-        if (text) {
-        const newProfiles = profiles.filter(profile => {
-            const profileData = `${profile.name.toUpperCase()} ${profile.lastName.toUpperCase()}`;
-            const textData = text.toUpperCase();
-            return profileData.indexOf(textData) > -1;
-        });
-        setFilteredProfiles(newProfiles);
-        } else {
-        setFilteredProfiles(profiles);
+            }).then((response)=> {
+                const friendsData = response?.data?.data?.profiles?.map(friend => ({
+                    id: friend?._id,
+                    firstName: friend?.firstName,
+                    lastName: friend?.lastName,
+                    age: friend?.age,
+                    about: friend?.about,
+                    heightFeet: friend?.height?.feet,
+                    heightInches: friend?.height?.inches,
+                    language: friend?.tongue,
+                    address: friend?.address,
+                    status: friend?.status,
+                    city: friend?.city,
+                    state: friend?.state,
+                    image: friend?.image, 
+                }));
+                setProfiles(friendsData);
+                setFilteredProfiles(friendsData);
+            }).catch(async(err)=> {
+                if(err?.response?.data?.message == "Invalid/Expired token."){
+                    await AsyncStorage.clear()
+                    navigation.navigate('LoginScreen')
+                }
+                console.log("ERR: ", err)
+            });
+        } catch (error) {
+            console.error('Error fetching friends data:', error);
+        } finally {
+            setLoading(false);
         }
     };
+    
+    
+
+    useEffect(() => {
+        
+        fetchProfiles();
+
+       
+    }, []);
+
+    
 
     const navigation = useNavigation();
 
@@ -177,22 +169,70 @@ const App = () => {
                             step={0.1}
                         />
 
+                        <Text style={styles.label}>Tongue</Text>
+                        <View style={styles.optionGroup}>
+                            {['urdu', 'punjabi', 'pasthon', 'sindhi'].map((item) => (
+                                <TouchableOpacity 
+                                    key={item} 
+                                    style={[styles.optionButton, tongue === item && styles.selectedOptionButton]} 
+                                    onPress={() => setTongue(item)}
+                                >
+                                    <Text style={styles.optionButtonText}>{item}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+
+                        <Text style={styles.label}>Cast</Text>
+                        <View style={styles.optionGroup}>
+                            {['siddiqui', 'butt', 'arain', 'mughal'].map((item) => (
+                                <TouchableOpacity 
+                                    key={item} 
+                                    style={[styles.optionButton, cast === item && styles.selectedOptionButton]} 
+                                    onPress={() => setCast(item)}
+                                >
+                                    <Text style={styles.optionButtonText}>{item}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity style={styles.discardButton} onPress={() => setFilterModalVisible(false)}>
                                 <Text style={styles.discardButtonText}>Discard</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.applyButton} onPress={() => setFilterModalVisible(false)}>
+                            <TouchableOpacity style={styles.applyButton} onPress={() => {
+                                fetchProfiles()
+                                setFilterModalVisible(false)
+                                }}>
                                 <Text style={styles.applyButtonText}>Apply</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
             </Modal>
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    optionGroup: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        marginVertical: 10,
+    },
+    optionButton: {
+        padding: 10,
+        backgroundColor: '#e0e0e0',
+        borderRadius: 5,
+        margin: 5,
+    },
+    selectedOptionButton: {
+        backgroundColor: '#9B2242',
+    },
+    optionButtonText: {
+        color: 'white',
+    },
     container: {
         flex: 1,
         backgroundColor: '#0f172a',

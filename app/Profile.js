@@ -68,9 +68,7 @@ const ProfileScreen = () => {
             <Text style={styles.name}>{profileData?.firstName}</Text>
             <Text style={styles.age}>{Math.floor(profileData?.age)} Years</Text>
             <Text style={styles.title}>{profileData?.title}</Text>
-            <TouchableOpacity style={styles.requestButton}>
-            {/* <Text style={styles.requestButtonText}>Request +</Text> */}
-            </TouchableOpacity>
+            
         </View>
         <View style={styles.profileSection}>
             <Text style={styles.profileHeading}>Profile :</Text>
