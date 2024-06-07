@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -57,128 +57,139 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-back" size={24} color="#000" />
-      </TouchableOpacity>
-      <Text style={styles.title}>Sign Up</Text>
-      <View style={styles.inputContainer}>
+    <SafeAreaView style={styles.containerParent}>
+      <ScrollView style={styles.container}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Sign Up</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputHalf}
+            placeholder="First Name"
+            placeholderTextColor="#000"
+            value={firstName.value}
+            onChangeText={handleChange(setFirstName)}
+          />
+          <TextInput
+            style={styles.inputHalf}
+            placeholder="Last Name"
+            placeholderTextColor="#000"
+            value={lastName.value}
+            onChangeText={handleChange(setLastName)}
+          />
+        </View>
         <TextInput
-          style={styles.inputHalf}
-          placeholder="First Name"
+          style={styles.input}
+          placeholder="Nick Name"
           placeholderTextColor="#000"
-          value={firstName.value}
-          onChangeText={handleChange(setFirstName)}
+          value={nickName.value}
+          onChangeText={handleChange(setNickName)}
         />
         <TextInput
-          style={styles.inputHalf}
-          placeholder="Last Name"
+          style={styles.input}
+          placeholder="Email"
           placeholderTextColor="#000"
-          value={lastName.value}
-          onChangeText={handleChange(setLastName)}
-        />
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Nick Name"
-        placeholderTextColor="#000"
-        value={nickName.value}
-        onChangeText={handleChange(setNickName)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#000"
-        value={email.value}
-        onChangeText={handleChange(setEmail)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#000"
-        secureTextEntry
-        value={password.value}
-        onChangeText={handleChange(setPassword)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        placeholderTextColor="#000"
-        secureTextEntry
-        value={confirmPassword.value}
-        onChangeText={handleChange(setConfirmPassword)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contact Number"
-        placeholderTextColor="#000"
-        keyboardType="phone-pad"
-        value={phoneNumber.value}
-        onChangeText={handleChange(setPhoneNumber)}
-      />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputHalf}
-          placeholder="DOB"
-          placeholderTextColor="#000"
-          value={dob.value}
-          onChangeText={handleChange(setDob)}
+          value={email.value}
+          onChangeText={handleChange(setEmail)}
         />
         <TextInput
-          style={styles.inputHalf}
-          placeholder="Height"
+          style={styles.input}
+          placeholder="Password"
           placeholderTextColor="#000"
-          value={height.value}
-          onChangeText={handleChange(setHeight)}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputHalf}
-          placeholder="Country"
-          placeholderTextColor="#000"
-          value={country.value}
-          onChangeText={handleChange(setCountry)}
+          secureTextEntry
+          value={password.value}
+          onChangeText={handleChange(setPassword)}
         />
         <TextInput
-          style={styles.inputHalf}
-          placeholder="Gender"
+          style={styles.input}
+          placeholder="Confirm Password"
           placeholderTextColor="#000"
-          value={gender.value}
-          onChangeText={handleChange(setGender)}
+          secureTextEntry
+          value={confirmPassword.value}
+          onChangeText={handleChange(setConfirmPassword)}
         />
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Address"
-        placeholderTextColor="#000"
-        value={address.value}
-        onChangeText={handleChange(setAddress)}
-      />
-      <TouchableOpacity onPress={onNextPressed} style={styles.button}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
-    </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Contact Number"
+          placeholderTextColor="#000"
+          keyboardType="phone-pad"
+          value={phoneNumber.value}
+          onChangeText={handleChange(setPhoneNumber)}
+        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputHalf}
+            placeholder="DOB"
+            placeholderTextColor="#000"
+            value={dob.value}
+            onChangeText={handleChange(setDob)}
+          />
+          <TextInput
+            style={styles.inputHalf}
+            placeholder="Height"
+            placeholderTextColor="#000"
+            value={height.value}
+            onChangeText={handleChange(setHeight)}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputHalf}
+            placeholder="Country"
+            placeholderTextColor="#000"
+            value={country.value}
+            onChangeText={handleChange(setCountry)}
+          />
+          <TextInput
+            style={styles.inputHalf}
+            placeholder="Gender"
+            placeholderTextColor="#000"
+            value={gender.value}
+            onChangeText={handleChange(setGender)}
+          />
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Address"
+          placeholderTextColor="#000"
+          value={address.value}
+          onChangeText={handleChange(setAddress)}
+        />
+        <TouchableOpacity onPress={onNextPressed} style={styles.button}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  containerParent: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
     padding: 16,
   },
   backButton: {
     position: 'absolute',
-    top: 40,
+    top: 14,
     left: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 24,
+    marginTop: 10,
+    alignItems: 'center',
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',

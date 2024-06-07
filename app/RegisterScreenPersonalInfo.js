@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 export default function RegisterScreenPersonalInfo() {
@@ -93,7 +93,8 @@ export default function RegisterScreenPersonalInfo() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.containerParent}>
+      <ScrollView style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Icon name="arrow-back" size={24} color="#000" />
       </TouchableOpacity>
@@ -174,27 +175,33 @@ export default function RegisterScreenPersonalInfo() {
       <TouchableOpacity onPress={onNextPressed} style={styles.button}>
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  containerParent: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 16,
   },
   backButton: {
     position: 'absolute',
-    top: 40,
+    top: 5,
     left: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 24,
+    textAlign: 'center'
   },
   inputContainer: {
     flexDirection: 'row',

@@ -172,7 +172,7 @@ const UploadImageScreen = ({}) => {
             {isLoading ? (
             <ActivityIndicator size="small" color="#FFF" />
             ) : (
-            <Text style={styles.loginButtonText}>Login</Text>
+            <Text style={styles.loginButtonText}>Register</Text>
             )}
         </TouchableOpacity>
         
@@ -192,6 +192,8 @@ const styles = {
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 20,
+    marginTop: 40,
+    paddingHorizontal: 50,
   },
   loginButtonText: {
     color: '#fff',

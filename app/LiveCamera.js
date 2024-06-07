@@ -99,7 +99,15 @@ export default function LiveCamera() {
 
   return (
     <View style={styles.container}>
-      <Button title="Take a picture" onPress={pickImage} />
+      {imageUri ? (
+        <TouchableOpacity style={styles.takePictureAgainButton} onPress={pickImage}>
+          <Text style={styles.takePictureAgainButtonText}>Take a picture again</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={styles.roundButton} onPress={pickImage}>
+          <Text style={styles.roundButtonText}>Take a picture</Text>
+        </TouchableOpacity>
+      )}
       {imageUri && (
         <>
           <Image source={{ uri: imageUri }} style={styles.image} />
@@ -108,11 +116,11 @@ export default function LiveCamera() {
           ) : (
             <>
               <TouchableOpacity style={styles.loginButton} onPress={sendImage} disabled={isLoading}>
-                  {isLoading ? (
-                    <ActivityIndicator size="small" color="#FFF" />
-                  ) : (
-                    <Text style={styles.loginButtonText}>Verify</Text>
-                  )}
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#FFF" />
+                ) : (
+                  <Text style={styles.loginButtonText}>Verify</Text>
+                )}
               </TouchableOpacity>
               {errorMessage ? (
                 <View style={styles.errorContainer}>
@@ -123,37 +131,68 @@ export default function LiveCamera() {
           )}
         </>
       )}
-      <Button title="Go to Register" onPress={() => navigation.navigate('RegisterScreen')} />
+      <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('RegisterScreen')}>
+        <Text style={styles.registerButtonText}>Go to Register</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
+
 const styles = StyleSheet.create({
-  button: {
-    marginTop: 20,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: '#f8f8f8',
   },
-  loginButton: {
+  roundButton: {
+    borderColor: 'maroon',
+    borderWidth: 3,
+    borderRadius: 75,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 150,
+    height: 150,
+  },
+  roundButtonText: {
+    color: 'maroon',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  takePictureAgainButton: {
     backgroundColor: 'maroon',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 20,
-    marginTop: 20
+    marginTop: 20,
+    paddingHorizontal: 0
+  },
+  takePictureAgainButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    paddingHorizontal: 40,
+  },
+  loginButton: {
+    backgroundColor: 'maroon',
+    padding: 15,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginVertical: 20,
   },
   loginButtonText: {
     color: '#fff',
     fontSize: 16,
-    paddingHorizontal:60
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 60,
   },
   image: {
     width: 200,
     height: 200,
     marginTop: 20,
+    borderRadius: 10,
   },
   errorContainer: {
     marginTop: 20,
@@ -163,5 +202,17 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
     textAlign: 'center',
+  },
+  registerButton: {
+    backgroundColor: 'maroon',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  registerButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    paddingHorizontal: 40,
   },
 });
