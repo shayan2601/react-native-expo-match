@@ -56,7 +56,7 @@ const App = () => {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 },
-            }).then((response)=> {
+            }).then(async(response)=> {
                 const friendsData = response?.data?.data?.profiles?.map(friend => ({
                     id: friend?._id,
                     firstName: friend?.firstName,
@@ -74,6 +74,7 @@ const App = () => {
                 }));
                 setProfiles(friendsData);
                 setFilteredProfiles(friendsData);
+                await AsyncStorage.setItem("allUsers", JSON.stringify(friendsData));
             }).catch(async(err)=> {
                 if(err?.response?.data?.message == "Invalid/Expired token."){
                     await AsyncStorage.clear()
@@ -109,15 +110,7 @@ const App = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.iconButton}>
-                    <Icon name="arrow-back" type="material" color="#000" />
-                </TouchableOpacity>
-                <Text style={styles.title}>Yours Matches</Text>
-                <TouchableOpacity style={styles.iconButton}>
-                    <Icon name="search" type="material" color="#000" />
-                </TouchableOpacity>
-            </View>
+            
             <View style={styles.searchContainer}>
                 <Ionicons name="search" size={20} color="white" />
                 <TextInput 

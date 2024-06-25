@@ -1,14 +1,106 @@
 // src/ChatScreen.js
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TextInput, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
-const chatMessages = [
-  { id: '1', sender: 'other', text: 'Hello! Have you seen my backpack anywhere in office?', time: '15:42' },
-  { id: '2', sender: 'me', text: 'Hi, yes, David have found it, ask our concierge 👀', time: '15:42' },
-];
 
 const ChatScreen = ({ route }) => {
-  // const { name, profilePic } = route.params;
+  const [message, setMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
+  const navigation = useNavigation();
+
+  const getChat = async () => {
+    let selectedMessageUserId = await AsyncStorage.getItem('selectedMessageUserId');
+    const userToken = await AsyncStorage.getItem('userToken');
+    const userId = await AsyncStorage.getItem('userId');
+    try {
+      const response = await axios.get(
+        `http://13.60.56.191:3001/api/chat/getMessages/${userId}/${selectedMessageUserId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      const fetchedMessages = response.data.data.map((msg) => ({
+        id: msg.id,
+        sender: msg.from === userId ? 'me' : 'other',
+        text: msg.message,
+        time: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }));
+
+      setChatMessages(fetchedMessages);
+      console.log("RES: ", response.data);
+
+    } catch (err) {
+      console.log("ERR: ", err);
+      if (err?.response?.data?.message === "Invalid/Expired token.") {
+        await AsyncStorage.clear();
+        navigation.navigate('LoginScreen');
+      }
+    }
+  };
+
+  useEffect(() => {
+    getChat();
+    const interval = setInterval(() => {
+      getChat();
+    }, 3000); // Fetch every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const sendMessage = async () => {
+    let selectedMessageUserId = await AsyncStorage.getItem('selectedMessageUserId')
+    if (!message.trim()) return;
+    const userToken = await AsyncStorage.getItem('userToken');
+    const userId = await AsyncStorage.getItem('userId');
+    try {
+      const response = await axios.post(
+        'http://13.60.56.191:3001/api/chat/sendMessage',
+        { message: message, from: userId, to: selectedMessageUserId },
+        {
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      ).then((res)=> {
+        console.log("RES: ", res?.data)
+        if (res.data.message === "Message sent successfully!") {
+          setChatMessages(prevChatMessages => [
+            ...prevChatMessages,
+            {
+              id: (prevChatMessages.length + 1).toString(),
+              sender: 'me',
+              text: message,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            }
+          ]);
+        }
+      }).catch(async(err)=> {
+        console.log("ERR: ", err)
+        if(err?.response?.data?.message == "Invalid/Expired token."){
+          await AsyncStorage.clear()
+          navigation.navigate('LoginScreen')
+        }
+      });
+
+      
+    } catch (error) {
+      console.error('Error sending message:', error);
+      if(error?.response?.data?.message == "Invalid/Expired token."){
+        await AsyncStorage.clear()
+        navigation.navigate('LoginScreen')
+      }
+    }
+
+    setMessage('');
+  };
 
   const renderItem = ({ item }) => (
     <View style={[styles.messageContainer, item.sender === 'me' ? styles.myMessage : styles.otherMessage]}>
@@ -19,13 +111,6 @@ const ChatScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backText}>{"<"}</Text>
-        </TouchableOpacity>
-        <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.profilePic} />
-        <Text style={styles.headerText}>JOHN</Text>
-      </View>
       <FlatList
         data={chatMessages}
         renderItem={renderItem}
@@ -33,8 +118,14 @@ const ChatScreen = ({ route }) => {
         contentContainerStyle={styles.chatList}
       />
       <View style={styles.inputContainer}>
-        <TextInput style={styles.input} placeholder="Type a message" placeholderTextColor="#000" />
-        <TouchableOpacity style={styles.sendButton}>
+        <TextInput
+          style={styles.input}
+          placeholder="Type a message"
+          placeholderTextColor="#000"
+          value={message}
+          onChangeText={setMessage}
+        />
+        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
           <Text style={styles.sendButtonText}>Send</Text>
         </TouchableOpacity>
       </View>

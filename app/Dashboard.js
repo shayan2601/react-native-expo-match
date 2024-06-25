@@ -64,7 +64,7 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.nearYouHeader}>
                 <Text style={styles.nearYou}>Near You</Text>
-                <Text style={styles.viewAll}>View all</Text>
+                <Text onPress={() => navigation.navigate('Matches')} style={styles.viewAll}>View all</Text>
             </View>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.card}>
