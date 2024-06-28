@@ -14,7 +14,8 @@ export default function App() {
 
   const handleLogin = async() => {
     setIsLoading(true);
-
+    
+    // return navigation.navigate('Dashboard');
     await axios.post('http://13.60.56.191:3001/api/user/login', {
         email: email,
         password: password,
@@ -28,9 +29,8 @@ export default function App() {
           await AsyncStorage.setItem('userToken', res.data.data.token);
           await AsyncStorage.setItem('userId', res.data.data.userId);
           await AsyncStorage.setItem('userEmail', res.data.data.email);
-    
-          navigation.navigate('Dashboard');
           setIsLoading(false);
+          return navigation.navigate('Dashboard');
         } catch (error) {
           console.error('Error parsing JSON:', error);
           setIsLoading(false);
@@ -46,7 +46,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <Ionicons name="chevron-back" size={24} color="black" />
       </TouchableOpacity>
       <Text style={styles.welcomeText}>Welcome back! Glad to see you, Again!</Text>

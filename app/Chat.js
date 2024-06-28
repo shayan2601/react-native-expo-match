@@ -136,7 +136,7 @@ const ChatScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#141829',
+    backgroundColor: '#fafafa',
   },
   header: {
     flexDirection: 'row',
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#9a2143',
     padding: 10,
     borderRadius: 20,
   },

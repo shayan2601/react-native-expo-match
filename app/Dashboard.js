@@ -31,9 +31,9 @@ export default function DashboardScreen() {
         navigation.navigate('Matches');
     };
 
-    const boy = Asset.fromModule(require('../assets/boy.png')).uri;
+    // const boy = Asset.fromModule(require('../assets/boy.png')).uri;
     const girl = Asset.fromModule(require('../assets/girl.png')).uri;
-    const dashboardBg = Asset.fromModule(require('../assets/dashboard-bg.jpeg')).uri;
+    const dashboardBg = Asset.fromModule(require('../assets/dash-bg.png')).uri;
     const mubeen = Asset.fromModule(require('../assets/mubeen.jpeg')).uri;
     const aleezy = Asset.fromModule(require('../assets/aleezy.jpeg')).uri;
 
@@ -48,7 +48,7 @@ export default function DashboardScreen() {
                 <Ionicons name="notifications-outline" size={24} color="black" />
             </View>
             <View style={styles.greeting}>
-                <Image source={{uri: boy}} style={styles.greetingImage} />
+                {/* <Image source={{uri: dashboardBg}} style={styles.greetingImage} /> */}
                 <Text style={styles.greetingText}>Hello, Salman!</Text>
             </View>
             <View style={styles.searchContainer}>
@@ -59,7 +59,7 @@ export default function DashboardScreen() {
                     placeholder="Search for partner" 
                 />
                 <TouchableOpacity onPress={() => setFilterModalVisible(true)}>
-                    <FontAwesome name="filter" size={24} color="black" />
+                    {/* <FontAwesome name="filter" size={24} color="black" /> */}
                 </TouchableOpacity>
             </View>
             <View style={styles.nearYouHeader}>
@@ -79,8 +79,8 @@ export default function DashboardScreen() {
             </ScrollView>
             <View style={styles.footer}>
                 <Ionicons name="home" size={30} color="maroon" />
-                <Ionicons name="search" size={30} color="black" />
-                <Ionicons onPress={() => navigation.navigate('Message')} name="chatbubbles-outline" size={30} color="black" />
+                <Ionicons name="heart" size={30} color="maroon" />
+                <Ionicons onPress={() => navigation.navigate('Chat')} name="chatbubbles-outline" size={30} color="black" />
                 <Ionicons onPress={() => navigation.navigate('Profile')} name="person-outline" size={30} color="black" />
             </View>
 
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: '100%',
         height: '40%',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Adjust the opacity as needed
+        // backgroundColor: 'rgba(255, 255, 255, 0.8)', // Adjust the opacity as needed
     },
     header: {
         flexDirection: 'row',
@@ -180,10 +180,11 @@ const styles = StyleSheet.create({
     greeting: {
         alignItems: 'center',
         marginVertical: 20,
+        marginTop: 216
     },
     greetingImage: {
-        width: 200,
-        height: 200,
+        width: 400,
+        height: 330,
     },
     greetingText: {
         fontSize: 24,
@@ -194,10 +195,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderRadius: 10,
+        borderRadius: 30,
         padding: 10,
-        backgroundColor: 'white',
+        backgroundColor: '#F2F2F2',
         marginHorizontal: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     searchInput: {
         marginLeft: 10,
@@ -244,15 +250,13 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the opacity to your preference
         padding: 10,
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
-        marginRight: 20,
-        marginLeft: 20
     },
     name: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         color: 'white',
     },
@@ -269,12 +273,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         paddingVertical: 10,
+        backgroundColor: '#FFF',
         borderTopWidth: 1,
-        borderTopColor: '#ddd',
-        backgroundColor: 'white', // Ensures it has a background color
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
+        borderTopColor: '#eee',
     },
     modalContainer: {
         flex: 1,
@@ -290,15 +291,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalOption: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-        width: '100%',
-        alignItems: 'center',
+        marginVertical: 10,
     },
     modalText: {
         fontSize: 18,
-        color: '#333',
+        color: 'black',
     },
     centeredView: {
         flex: 1,
@@ -309,16 +306,26 @@ const styles = StyleSheet.create({
     filterModalView: {
         width: '80%',
         backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 20,
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
     },
     filterModalTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 20,
     },
     label: {
         fontSize: 16,
+        fontWeight: 'bold',
         marginVertical: 10,
     },
     buttonContainer: {
@@ -330,18 +337,21 @@ const styles = StyleSheet.create({
         backgroundColor: '#ccc',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 5,
+        borderRadius: 10,
+        marginRight: 10,
     },
     discardButtonText: {
-        color: 'white',
+        color: 'black',
+        fontSize: 16,
     },
     applyButton: {
         backgroundColor: '#9B2242',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     applyButtonText: {
         color: 'white',
+        fontSize: 16,
     },
 });

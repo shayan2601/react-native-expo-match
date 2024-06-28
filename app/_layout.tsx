@@ -23,6 +23,7 @@ export default function RootLayout() {
       <Stack.Screen name="Chat" />
       <Stack.Screen name="ProfileVerifiedScreen" />
       <Stack.Screen name="Matches" />
+      <Stack.Screen name="NearMe" />
     </Stack>
   );
 }

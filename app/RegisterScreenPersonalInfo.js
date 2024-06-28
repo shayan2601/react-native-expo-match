@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-toast-message';
 
 export default function RegisterScreenPersonalInfo() {
   const [userData, setUserData] = useState({
@@ -55,6 +56,28 @@ export default function RegisterScreenPersonalInfo() {
 
   const onNextPressed = async() => {
     console.log("First screen user data::: ", userData)
+
+    
+    const religionError = nameValidator(religion.value);
+    const castError = nameValidator(cast.value);
+    const tongueError = nameValidator(tongue.value);
+    const communityError = nameValidator(community.value);
+    const educationError = nameValidator(education.value);
+    const occupationError = nameValidator(occupation.value);
+    const bioError = nameValidator(bio.value);
+    const sectError = nameValidator(sect.value);
+
+    if (religionError || castError || tongueError || communityError || educationError || occupationError || bioError || sectError) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'Please fill out all required fields correctly',
+        visibilityTime: 4000,
+        position: 'top',
+        topOffset: 1
+      });
+      
+    }
     if (consent) {
 
 
@@ -95,8 +118,9 @@ export default function RegisterScreenPersonalInfo() {
   return (
     <SafeAreaView style={styles.containerParent}>
       <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-back" size={24} color="#000" />
+      <Toast />
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("RegisterScreen")}>
+        {/* <Icon name="arrow-back" size={24} color="#000" /> */}
       </TouchableOpacity>
       <Text style={styles.title}>Personal Info</Text>
       <View style={styles.inputContainer}>
@@ -194,14 +218,15 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 5,
+    top: 65,
     left: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 24,
-    textAlign: 'center'
+    textAlign: 'center',
+    marginTop: 60,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -257,3 +282,9 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 });
+
+
+const nameValidator = (name) => {
+  if (!name) return 'Input cannot be empty';
+  return '';
+};

@@ -109,7 +109,7 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#141829',
+        backgroundColor: '#232020',
     },
     header: {
         alignItems: 'center',

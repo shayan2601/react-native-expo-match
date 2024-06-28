@@ -1,8 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 export default function App() {
   const [firstName, setFirstName] = useState({ value: '', error: '' });
@@ -23,16 +24,35 @@ export default function App() {
   const onNextPressed = async() => {
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
+    const confirmPasswordError = passwordValidator(confirmPassword.value);
     const firstNameError = nameValidator(firstName.value);
     const lastNameError = nameValidator(lastName.value);
     const nickNameError = nameValidator(nickName.value);
-    if (emailError || passwordError || firstNameError || lastNameError || nickNameError) {
-      setFirstName({ ...firstName, error: firstNameError });
-      setLastName({ ...lastName, error: lastNameError });
-      setNickName({ ...nickName, error: nickNameError });
-      setEmail({ ...email, error: emailError });
-      setPassword({ ...password, error: passwordError });
-      return;
+    const phoneNumberError = nameValidator(phoneNumber.value);
+    const dobError = nameValidator(dob.value);
+    const heightError = nameValidator(height.value);
+    const countryError = nameValidator(country.value);
+    const genderError = nameValidator(gender.value);
+    const addressError = nameValidator(address.value);
+    // if (emailError || passwordError || firstNameError || lastNameError || nickNameError) {
+    //   setFirstName({ ...firstName, error: firstNameError });
+    //   setLastName({ ...lastName, error: lastNameError });
+    //   setNickName({ ...nickName, error: nickNameError });
+    //   setEmail({ ...email, error: emailError });
+    //   setPassword({ ...password, error: passwordError });
+    //   return;
+    // }
+    console.log("emailError: ", emailError)
+    if (emailError || passwordError || firstNameError || lastNameError || nickNameError || confirmPasswordError || phoneNumberError || dobError || heightError || countryError || genderError || addressError) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Validation Error',
+        text2: 'Please fill out all required fields correctly',
+        visibilityTime: 4000,
+        position: 'top',
+        topOffset: 1
+      });
+      
     }
     await AsyncStorage.setItem('userData', JSON.stringify({
       firstName: firstName.value,
@@ -59,8 +79,9 @@ export default function App() {
   return (
     <SafeAreaView style={styles.containerParent}>
       <ScrollView style={styles.container}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#000" />
+        <Toast />
+        <TouchableOpacity style={styles.backButton}>
+          {/* <Ionicons onPress={() => navigation.goBack()} name="chevron-back" size={24} color="black" /> */}
         </TouchableOpacity>
         <Text style={styles.title}>Sign Up</Text>
         <View style={styles.inputContainer}>
@@ -160,6 +181,7 @@ export default function App() {
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </ScrollView>
+
     </SafeAreaView>
   );
 }
@@ -180,14 +202,14 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 14,
+    top: 54,
     left: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 24,
-    marginTop: 10,
+    marginTop: 50,
     alignItems: 'center',
     textAlign: 'center',
   },
@@ -241,6 +263,6 @@ const passwordValidator = (password) => {
 };
 
 const nameValidator = (name) => {
-  if (!name) return 'Name cannot be empty';
+  if (!name) return 'Input cannot be empty';
   return '';
 };
