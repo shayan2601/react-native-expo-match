@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { base_url } from '../constants/baseUrl';
+import Toast from 'react-native-toast-message';
 
 export default function App() {
   const [email, setEmail] = useState('');
@@ -40,13 +41,22 @@ export default function App() {
         }
       }).catch((error) => {
         setIsLoading(false);
-        console.log("ERR: ", error)
+        console.log("ERR: ", error.data)
+        Toast.show({
+          type: 'error',
+          text1: 'server Error',
+          text2: 'Internal server error',
+          visibilityTime: 4000,
+          position: 'top',
+          topOffset:80
+        });
       });
   };
   
 
   return (
     <View style={styles.container}>
+      <Toast />
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <Ionicons name="chevron-back" size={24} color="black" />
       </TouchableOpacity>
