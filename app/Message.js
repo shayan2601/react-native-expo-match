@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { base_url } from '../constants/baseUrl';
 
 const messages = [
     {
@@ -54,7 +55,7 @@ const MessagesScreen = () => {
           navigation.navigate('Chat', { name: item.firstName, profilePic: item.image })
         }}
       >
-        <Image source={{ uri: `http://13.60.56.191:3001/uploads/${item?.image}` }} style={styles.profilePic} />
+        <Image source={{ uri: `${base_url}/uploads/${item?.image}` }} style={styles.profilePic} />
         <View style={styles.messageInfo}>
           <View style={styles.messageHeader}>
             <Text style={[styles.name, item.isPinned && styles.pinned]}>{item.firstName}</Text>

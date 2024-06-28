@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } fr
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { base_url } from '../constants/baseUrl';
 
 const DetailScreen = () => {
     const [profileData, setProfileData] = useState(null);
@@ -15,7 +16,7 @@ const DetailScreen = () => {
                 const userId = await AsyncStorage.getItem('selectedUserId');
                 const userToken = await AsyncStorage.getItem('userToken');
 
-                const response = await axios.get(`http://13.60.56.191:3001/api/profile/${userId}`, {
+                const response = await axios.get(`${base_url}/api/profile/${userId}`, {
                     headers: {
                     'Authorization': `Bearer ${userToken}`,
                     'Content-Type': 'application/json'
@@ -70,7 +71,7 @@ const DetailScreen = () => {
                 from: userId,
                 to: selectedUserId
             }
-            const response = await axios.post(`http://13.60.56.191:3001/api/friend-request/send`, payload, {
+            const response = await axios.post(`${base_url}/api/friend-request/send`, payload, {
                     headers: {
                     'Authorization': `Bearer ${userToken}`,
                     'Content-Type': 'application/json'
@@ -95,7 +96,7 @@ const DetailScreen = () => {
         <View style={styles.header}>
             <Image 
             style={styles.profileImage} 
-            source={{ uri: `http://13.60.56.191:3001/uploads/${profileData?.image}` }} 
+            source={{ uri: `${base_url}/uploads/${profileData?.image}` }} 
             />
             <Text style={styles.name}>{profileData?.firstName}</Text>
             <Text style={styles.age}>{Math.floor(profileData?.age)} Years</Text>

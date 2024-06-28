@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { base_url } from '../constants/baseUrl';
 
 export default function App() {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export default function App() {
     setIsLoading(true);
     
     // return navigation.navigate('Dashboard');
-    await axios.post('http://13.60.56.191:3001/api/user/login', {
+    await axios.post(`${base_url}/api/user/login`, {
         email: email,
         password: password,
       }, {

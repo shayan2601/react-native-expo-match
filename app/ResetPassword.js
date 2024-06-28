@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { base_url } from '../constants/baseUrl';
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState('');
@@ -18,7 +19,7 @@ export default function ResetPassword() {
 
     try {
       const email = await AsyncStorage.getItem("forgotPasswordEmail")
-      const response = await axios.post('http://13.60.56.191:3001/api/user/reset-password', {
+      const response = await axios.post(`${base_url}/api/user/reset-password`, {
         email: email,
         password: newPassword,
         confirmPassword: confirmPassword,

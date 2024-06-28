@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { base_url } from '../constants/baseUrl';
 
 export default function OTPVerification() {
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -26,7 +27,7 @@ export default function OTPVerification() {
     }
     console.log("otpCode: ", otpCode)
     try {
-      const response = await axios.post('http://13.60.56.191:3001/api/user/verify-otp', {
+      const response = await axios.post(`${base_url}/api/user/verify-otp`, {
         otp: otpCode,
         email: email,
       }, {

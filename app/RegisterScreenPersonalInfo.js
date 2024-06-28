@@ -18,7 +18,8 @@ export default function RegisterScreenPersonalInfo() {
     height: '',
     country: '',
     gender: '',
-    address: ''
+    address: '',
+    city: ''
   });
 
   useEffect(() => {
@@ -100,6 +101,7 @@ export default function RegisterScreenPersonalInfo() {
         tongue: tongue.value,
         community: community.value,
         education: education.value,
+        city: userData.city,
         occupation: occupation.value,
         bio: bio.value,
         isAgreedToTermsAndPolicy: 'true'

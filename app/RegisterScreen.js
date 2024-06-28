@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, SafeAreaView, StatusBar, FlatList, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function App() {
   const [firstName, setFirstName] = useState({ value: '', error: '' });
@@ -18,10 +18,23 @@ export default function App() {
   const [country, setCountry] = useState({ value: '', error: '' });
   const [gender, setGender] = useState({ value: '', error: '' });
   const [address, setAddress] = useState({ value: '', error: '' });
+  const [city, setCity] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: 'Lahore', value: 'lahore' },
+    { label: 'Karachi', value: 'karachi' },
+    { label: 'Faisalabad', value: 'faisalabad' },
+    { label: 'Islamabad', value: 'islamabad' },
+    { label: 'Peshawar', value: 'peshawar' },
+    { label: 'Quetta', value: 'quetta' },
+    { label: 'Bahawalpur', value: 'bahawalpur' },
+    { label: 'Sahiwal', value: 'sahiwal' },
+    { label: 'Okara', value: 'okara' }
+  ]);
 
   const navigation = useNavigation();
 
-  const onNextPressed = async() => {
+  const onNextPressed = async () => {
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
     const confirmPasswordError = passwordValidator(confirmPassword.value);
@@ -34,16 +47,9 @@ export default function App() {
     const countryError = nameValidator(country.value);
     const genderError = nameValidator(gender.value);
     const addressError = nameValidator(address.value);
-    // if (emailError || passwordError || firstNameError || lastNameError || nickNameError) {
-    //   setFirstName({ ...firstName, error: firstNameError });
-    //   setLastName({ ...lastName, error: lastNameError });
-    //   setNickName({ ...nickName, error: nickNameError });
-    //   setEmail({ ...email, error: emailError });
-    //   setPassword({ ...password, error: passwordError });
-    //   return;
-    // }
-    console.log("emailError: ", emailError)
-    if (emailError || passwordError || firstNameError || lastNameError || nickNameError || confirmPasswordError || phoneNumberError || dobError || heightError || countryError || genderError || addressError) {
+    const cityError = city ? '' : 'Input cannot be empty';
+
+    if (emailError || passwordError || firstNameError || lastNameError || nickNameError || confirmPasswordError || phoneNumberError || dobError || heightError || countryError || genderError || addressError || cityError) {
       return Toast.show({
         type: 'error',
         text1: 'Validation Error',
@@ -52,8 +58,8 @@ export default function App() {
         position: 'top',
         topOffset: 1
       });
-      
     }
+    console.log("city", city)
     await AsyncStorage.setItem('userData', JSON.stringify({
       firstName: firstName.value,
       lastName: lastName.value,
@@ -66,122 +72,86 @@ export default function App() {
       height: height.value,
       country: country.value,
       gender: gender.value,
-      address: address.value
+      address: address.value,
+      city: city
     }));
 
-    navigation.navigate('RegisterScreenPersonalInfo')
+    navigation.navigate('RegisterScreenPersonalInfo');
   };
 
   const handleChange = (setter) => (text) => {
     setter({ value: text, error: '' });
   };
 
+  const renderInput = (placeholder, value, onChangeText, secureTextEntry = false, keyboardType = 'default') => (
+    <TextInput
+      style={styles.input}
+      placeholder={placeholder}
+      placeholderTextColor="#000"
+      value={value}
+      onChangeText={onChangeText}
+      secureTextEntry={secureTextEntry}
+      keyboardType={keyboardType}
+    />
+  );
+
   return (
     <SafeAreaView style={styles.containerParent}>
-      <ScrollView style={styles.container}>
-        <Toast />
-        <TouchableOpacity style={styles.backButton}>
-          {/* <Ionicons onPress={() => navigation.goBack()} name="chevron-back" size={24} color="black" /> */}
-        </TouchableOpacity>
-        <Text style={styles.title}>Sign Up</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputHalf}
-            placeholder="First Name"
-            placeholderTextColor="#000"
-            value={firstName.value}
-            onChangeText={handleChange(setFirstName)}
-          />
-          <TextInput
-            style={styles.inputHalf}
-            placeholder="Last Name"
-            placeholderTextColor="#000"
-            value={lastName.value}
-            onChangeText={handleChange(setLastName)}
-          />
-        </View>
-        <TextInput
-          style={styles.input}
-          placeholder="Nick Name"
-          placeholderTextColor="#000"
-          value={nickName.value}
-          onChangeText={handleChange(setNickName)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#000"
-          value={email.value}
-          onChangeText={handleChange(setEmail)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#000"
-          secureTextEntry
-          value={password.value}
-          onChangeText={handleChange(setPassword)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          placeholderTextColor="#000"
-          secureTextEntry
-          value={confirmPassword.value}
-          onChangeText={handleChange(setConfirmPassword)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Contact Number"
-          placeholderTextColor="#000"
-          keyboardType="phone-pad"
-          value={phoneNumber.value}
-          onChangeText={handleChange(setPhoneNumber)}
-        />
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputHalf}
-            placeholder="DOB"
-            placeholderTextColor="#000"
-            value={dob.value}
-            onChangeText={handleChange(setDob)}
-          />
-          <TextInput
-            style={styles.inputHalf}
-            placeholder="Height"
-            placeholderTextColor="#000"
-            value={height.value}
-            onChangeText={handleChange(setHeight)}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputHalf}
-            placeholder="Country"
-            placeholderTextColor="#000"
-            value={country.value}
-            onChangeText={handleChange(setCountry)}
-          />
-          <TextInput
-            style={styles.inputHalf}
-            placeholder="Gender"
-            placeholderTextColor="#000"
-            value={gender.value}
-            onChangeText={handleChange(setGender)}
-          />
-        </View>
-        <TextInput
-          style={styles.input}
-          placeholder="Address"
-          placeholderTextColor="#000"
-          value={address.value}
-          onChangeText={handleChange(setAddress)}
-        />
-        <TouchableOpacity onPress={onNextPressed} style={styles.button}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      {/* <FlatList
+        data={[]}
+        ListHeaderComponent={() => ( */}
+          <ScrollView contentContainerStyle={styles.container}>
+            <Toast />
+            <TouchableOpacity style={styles.backButton}>
+              {/* <Ionicons onPress={() => navigation.goBack()} name="chevron-back" size={24} color="black" /> */}
+            </TouchableOpacity>
+            <Text style={styles.title}>Sign Up</Text>
 
+            <View style={styles.inputHalfContainer}>
+              {renderInput("First Name", firstName.value, handleChange(setFirstName))}
+              {renderInput("Last Name", lastName.value, handleChange(setLastName))}
+            </View>
+            
+            {renderInput("Nick Name", nickName.value, handleChange(setNickName))}
+            {renderInput("Email", email.value, handleChange(setEmail))}
+            
+            <View style={styles.inputHalfContainer}>
+              {renderInput("Password", password.value, handleChange(setPassword), true)}
+              {renderInput("Confirm Password", confirmPassword.value, handleChange(setConfirmPassword), true)}
+            </View>
+
+            {renderInput("Contact Number", phoneNumber.value, handleChange(setPhoneNumber), false, "phone-pad")}
+            
+            <View style={styles.inputHalfContainer}>
+              {renderInput("DOB", dob.value, handleChange(setDob))}
+              {renderInput("Gender", gender.value, handleChange(setGender))}
+            </View>
+            
+            <View style={styles.inputHalfContainer}>
+              {renderInput("Country", country.value, handleChange(setCountry))}
+              {renderInput("Height", height.value, handleChange(setHeight))}
+            </View>
+            
+            {renderInput("Address", address.value, handleChange(setAddress))}
+            
+            <DropDownPicker
+              open={open}
+              value={city}
+              items={items}
+              setOpen={setOpen}
+              setValue={setCity}
+              setItems={setItems}
+              placeholder="Select your city"
+              style={styles.picker}
+              containerStyle={styles.pickerContainer}
+            />
+            <TouchableOpacity onPress={onNextPressed} style={styles.button}>
+              <Text style={styles.buttonText}>Next</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        {/* )}
+        contentContainerStyle={styles.container}
+      /> */}
     </SafeAreaView>
   );
 }
@@ -190,14 +160,10 @@ const styles = StyleSheet.create({
   containerParent: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#f5f5f5',
-    // alignItems: 'center',
-    // justifyContent: 'center',
     padding: 16,
   },
   backButton: {
@@ -210,33 +176,36 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 24,
     marginTop: 50,
-    alignItems: 'center',
     textAlign: 'center',
   },
   inputContainer: {
+    marginBottom: 10,
+  },
+  inputHalfContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 16,
+    marginBottom: 0,
   },
   input: {
+    flex: 1,
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    marginHorizontal: 4,
+    marginBottom: 25,
+  },
+  picker: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
     marginBottom: 16,
-    width: '100%',
     backgroundColor: '#fff',
   },
-  inputHalf: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    width: '48%',
-    backgroundColor: '#fff',
+  pickerContainer: {
+    width: '100%',
   },
   button: {
     backgroundColor: '#800020',

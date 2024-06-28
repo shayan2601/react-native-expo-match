@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'r
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { base_url } from '../constants/baseUrl';
 
 
 const ChatScreen = ({ route }) => {
@@ -17,7 +18,7 @@ const ChatScreen = ({ route }) => {
     const userId = await AsyncStorage.getItem('userId');
     try {
       const response = await axios.get(
-        `http://13.60.56.191:3001/api/chat/getMessages/${userId}/${selectedMessageUserId}`,
+        `${base_url}/api/chat/getMessages/${userId}/${selectedMessageUserId}`,
         {
           headers: {
             'Authorization': `Bearer ${userToken}`,
@@ -61,7 +62,7 @@ const ChatScreen = ({ route }) => {
     const userId = await AsyncStorage.getItem('userId');
     try {
       const response = await axios.post(
-        'http://13.60.56.191:3001/api/chat/sendMessage',
+        '${base_url}/api/chat/sendMessage',
         { message: message, from: userId, to: selectedMessageUserId },
         {
           headers: {

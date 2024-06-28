@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { base_url } from '../constants/baseUrl';
 
 
 export default function LiveCamera() {
@@ -70,7 +71,7 @@ export default function LiveCamera() {
 
         console.log("formData: ", formData)
 
-        let response = await axios.post('http://13.60.56.191:3001/api/user/facial-verification', formData, {
+        let response = await axios.post(`${base_url}/api/user/facial-verification`, formData, {
             headers: {
               Accept: 'application/json',
               'Content-Type': 'multipart/form-data',

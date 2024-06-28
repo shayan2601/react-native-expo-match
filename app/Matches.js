@@ -7,12 +7,13 @@ import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { base_url } from '../constants/baseUrl';
 
 const ProfileCard = ({ profile, onPress }) => {
     return (
         <TouchableOpacity onPress={onPress}>
             <View style={styles.card}>
-                <Image source={{ uri: `http://13.60.56.191:3001/uploads/${profile?.image}` }} style={styles.image} />
+                <Image source={{ uri: `${base_url}/uploads/${profile?.image}` }} style={styles.image} />
                 <View style={styles.info}>
                     <Text style={styles.name}>{profile.firstName}</Text>
                     <Text style={styles.nameLight}>{profile.lastName}</Text>
@@ -52,7 +53,7 @@ const App = () => {
                 height: `${heightRange[0]}'${heightRange[1]}"`,
                 tongue: tongue === 'urdu' ? "urdu" : tongue
             }
-            await axios.post(`http://13.60.56.191:3001/api/search/profile`, payload, {
+            await axios.post(`${base_url}/api/search/profile`, payload, {
                 headers: {
                     Authorization: `Bearer ${userToken}`,
                 },

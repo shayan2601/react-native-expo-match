@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { base_url } from '../constants/baseUrl';
 
 export default function EditProfileScreen({  }) {
   const navigation = useNavigation();
@@ -34,7 +35,7 @@ export default function EditProfileScreen({  }) {
               const userId = await AsyncStorage.getItem('userId');
               const userToken = await AsyncStorage.getItem('userToken');
 
-              const response = await axios.get(`http://13.60.56.191:3001/api/profile/${userId}`, {
+              const response = await axios.get(`${base_url}/api/profile/${userId}`, {
                 headers: {
                   'Authorization': `Bearer ${userToken}`,
                   'Content-Type': 'application/json'
@@ -105,7 +106,7 @@ export default function EditProfileScreen({  }) {
       };
       const userToken = await AsyncStorage.getItem('userToken');
 
-      const response = await axios.put('http://13.60.56.191:3001/api/user/profile/update', payload, {
+      const response = await axios.put('${base_url}/api/user/profile/update', payload, {
         headers: {
           'Authorization': `Bearer ${userToken}`,
           'Content-Type': 'application/json'

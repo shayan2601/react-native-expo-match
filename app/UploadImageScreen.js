@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
+import { base_url } from '../constants/baseUrl';
 
 const UploadImageScreen = ({}) => {
 
@@ -121,6 +122,7 @@ const UploadImageScreen = ({}) => {
             formData.append('password', data?.password);
             formData.append('confirmPassword', data?.confirmPassword);
             formData.append('dob', data?.dob);
+            formData.append('city', data?.city);
             formData.append('sect', data?.sect);
             formData.append('tongue', data?.tongue);
             formData.append('height', data?.height);
@@ -132,7 +134,7 @@ const UploadImageScreen = ({}) => {
             console.log('formData:', formData);
 
         
-            let response = await axios.post('http://13.60.56.191:3001/api/user/register', formData, {
+            let response = await axios.post(`${base_url}/api/user/register`, formData, {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'multipart/form-data',

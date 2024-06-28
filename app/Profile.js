@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { base_url } from '../constants/baseUrl';
 
 const ProfileScreen = () => {
     const [profileData, setProfileData] = useState(null);
@@ -13,7 +14,7 @@ const ProfileScreen = () => {
                 const userId = await AsyncStorage.getItem('userId');
                 const userToken = await AsyncStorage.getItem('userToken');
 
-                const response = await axios.get(`http://13.60.56.191:3001/api/profile/${userId}`, {
+                const response = await axios.get(`${base_url}/api/profile/${userId}`, {
                     headers: {
                     'Authorization': `Bearer ${userToken}`,
                     'Content-Type': 'application/json'
@@ -63,7 +64,7 @@ const ProfileScreen = () => {
         <View style={styles.header}>
             <Image 
             style={styles.profileImage} 
-            source={{ uri: `http://13.60.56.191:3001/uploads/${profileData?.image}` }} 
+            source={{ uri: `${base_url}/uploads/${profileData?.image}` }} 
             />
             <Text style={styles.name}>{profileData?.firstName}</Text>
             <Text style={styles.age}>{Math.floor(profileData?.age)} Years</Text>
