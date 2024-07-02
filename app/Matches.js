@@ -117,7 +117,7 @@ const App = () => {
     const convertToFeetInches = (totalInches) => {
         const feet = Math.floor(totalInches / 12);
         const inches = totalInches % 12;
-        return `${feet}'${inches}"`;
+        return `${feet}'${inches}`;
     };
 
 
