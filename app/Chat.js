@@ -62,7 +62,7 @@ const ChatScreen = ({ route }) => {
     const userId = await AsyncStorage.getItem('userId');
     try {
       const response = await axios.post(
-        '${base_url}/api/chat/sendMessage',
+        `${base_url}/api/chat/sendMessage`,
         { message: message, from: userId, to: selectedMessageUserId },
         {
           headers: {
