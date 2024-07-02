@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-toast-message';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function RegisterScreenPersonalInfo() {
   const [userData, setUserData] = useState({
@@ -38,15 +39,63 @@ export default function RegisterScreenPersonalInfo() {
     fetchData();
   }, []);
 
-  const [religion, setReligion] = useState({ value: '', error: '' });
-  const [cast, setCast] = useState({ value: '', error: '' });
-  const [tongue, setTongue] = useState({ value: '', error: '' });
+  // const [religion, setReligion] = useState({ value: '', error: '' });
+  // const [cast, setCast] = useState({ value: '', error: '' });
+  // const [tongue, setTongue] = useState({ value: '', error: '' });
   const [community, setCommunity] = useState({ value: '', error: '' });
   const [education, setEducation] = useState({ value: '', error: '' });
   const [occupation, setOccupation] = useState({ value: '', error: '' });
   const [bio, setBio] = useState({ value: '', error: '' });
   const [consent, setConsent] = useState(false);
-  const [sect, setSect] = useState({ value: '', error: '' });
+  // const [sect, setSect] = useState({ value: '', error: '' });
+
+
+
+
+  const [cast, setCast] = useState(null);
+  const [openCast, setOpenCast] = useState(false);
+  const [itemsCast, setItemsCast] = useState([
+    { label: 'Sayyid', value: 'sayyid' },
+    { label: 'Rajput', value: 'rajput' },
+    { label: 'Sheikh', value: 'sheikh' },
+    { label: 'Pathan', value: 'pathan' },
+    { label: 'Moguls', value: 'moguls' },
+    { label: 'Quetta', value: 'quetta' },
+  ]);
+
+  const [sect, setSect] = useState(null);
+  const [openSect, setOpenSect] = useState(false);
+  const [itemsSect, setItemsSect] = useState([
+    { label: 'Sunni', value: 'sunni' },
+    { label: 'Wahabi', value: 'wahabi' },
+    { label: 'Deobandi', value: 'deobandi' },
+    { label: 'Shia', value: 'shia' },
+  ]);
+
+
+
+  const [tongue, setTongue] = useState(null);
+  const [openTongue, setOpenTongue] = useState(false);
+  const [itemsTongue, setItemsTongue] = useState([
+    { label: 'Punjabi', value: 'punjabi' },
+    { label: 'Sindhi', value: 'sindhi' },
+    { label: 'Hindi', value: 'hindi' },
+    { label: 'Urdu', value: 'urdu' },
+    { label: 'English', value: 'english' },
+  ]);
+
+  const [religion, setReligion] = useState(null);
+  const [openReligion, setOpenReligion] = useState(false);
+  const [itemsReligion, setItemsReligion] = useState([
+    { label: 'Islam', value: 'islam' },
+    { label: 'Hinduism', value: 'hinduism' },
+    { label: 'Christianity', value: 'christianity' },
+    { label: 'Sikhism', value: 'sikhism' },
+    { label: 'Jainism', value: 'jainism' },
+    { label: 'Buddhist', value: 'buddhist' },
+  ]);
+
+
 
 
   const navigation = useNavigation();
@@ -59,14 +108,14 @@ export default function RegisterScreenPersonalInfo() {
     console.log("First screen user data::: ", userData)
 
     
-    const religionError = nameValidator(religion.value);
-    const castError = nameValidator(cast.value);
-    const tongueError = nameValidator(tongue.value);
+    const religionError = nameValidator(religion);
+    const castError = nameValidator(cast);
+    const tongueError = nameValidator(tongue);
     const communityError = nameValidator(community.value);
     const educationError = nameValidator(education.value);
     const occupationError = nameValidator(occupation.value);
     const bioError = nameValidator(bio.value);
-    const sectError = nameValidator(sect.value);
+    const sectError = nameValidator(sect);
 
     if (religionError || castError || tongueError || communityError || educationError || occupationError || bioError || sectError) {
       return Toast.show({
@@ -95,10 +144,10 @@ export default function RegisterScreenPersonalInfo() {
         country: userData.country,
         address: userData.address,
         gender: userData.gender,
-        religion: religion.value,
-        cast: cast.value,
-        sect: sect.value,
-        tongue: tongue.value,
+        religion: religion,
+        cast: cast,
+        sect: sect,
+        tongue: tongue,
         community: community.value,
         education: education.value,
         city: userData.city,
@@ -126,35 +175,33 @@ export default function RegisterScreenPersonalInfo() {
       </TouchableOpacity>
       <Text style={styles.title}>Personal Info</Text>
       <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputHalf}
-          placeholder="Religion"
-          placeholderTextColor="#000"
-          value={religion.value}
-          onChangeText={handleChange(setReligion)}
+        <DropDownPicker
+          open={openReligion}
+          value={religion}
+          items={itemsReligion}
+          setOpen={setOpenReligion}
+          setValue={setReligion}
+          setItems={setItemsReligion}
+          placeholder="Select your religion"
+          style={styles.pickerReligion}
+          containerStyle={styles.pickerContainerReligion}
         />
-        <TextInput
-          style={styles.inputHalf}
-          placeholder="Cast"
-          placeholderTextColor="#000"
-          value={cast.value}
-          onChangeText={handleChange(setCast)}
+        <DropDownPicker
+          open={openCast}
+          value={cast}
+          items={itemsCast}
+          setOpen={setOpenCast}
+          setValue={setCast}
+          setItems={setItemsCast}
+          placeholder="Select your cast"
+          style={styles.pickerCast}
+          containerStyle={styles.pickerContainerCast}
         />
+        
       </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Sect"
-        placeholderTextColor="#000"
-        value={sect.value}
-        onChangeText={handleChange(setSect)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Tongue"
-        placeholderTextColor="#000"
-        value={tongue.value}
-        onChangeText={handleChange(setTongue)}
-      />
+      
+      
+      
       <TextInput
         style={styles.input}
         placeholder="Community"
@@ -169,6 +216,17 @@ export default function RegisterScreenPersonalInfo() {
         value={education.value}
         onChangeText={handleChange(setEducation)}
       />
+      <DropDownPicker
+          open={openSect}
+          value={sect}
+          items={itemsSect}
+          setOpen={setOpenSect}
+          setValue={setSect}
+          setItems={setItemsSect}
+          placeholder="Select your Sect"
+          style={styles.picker}
+          containerStyle={styles.pickerContainer}
+        />
       <TextInput
         style={styles.input}
         placeholder="Occupation"
@@ -176,6 +234,7 @@ export default function RegisterScreenPersonalInfo() {
         value={occupation.value}
         onChangeText={handleChange(setOccupation)}
       />
+      
       <TextInput
         style={[styles.input, { height: 80 }]}
         placeholder="Bio"
@@ -184,6 +243,17 @@ export default function RegisterScreenPersonalInfo() {
         onChangeText={handleChange(setBio)}
         multiline
       />
+      <DropDownPicker
+          open={openTongue}
+          value={tongue}
+          items={itemsTongue}
+          setOpen={setOpenTongue}
+          setValue={setTongue}
+          setItems={setItemsTongue}
+          placeholder="Select your Tongue"
+          style={styles.picker}
+          containerStyle={styles.pickerContainer}
+        />
       <View style={styles.checkboxContainer}>
         <TouchableOpacity onPress={handleConsentChange}>
           {consent ? (
@@ -245,6 +315,42 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     width: '100%',
     backgroundColor: '#fff',
+  },
+  picker: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    // zIndex: 1
+  },
+  pickerReligion: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    // zIndex: 1
+  },
+  pickerCast: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    zIndex: 1
+  },
+  pickerContainer: {
+    width: '100%',
+    zIndex: 1
+  },
+  pickerContainerReligion: {
+    width: '50%',
+    // zIndex: 1
+  },
+  pickerContainerCast: {
+    width: '50%',
+    zIndex: 1
   },
   inputHalf: {
     height: 40,

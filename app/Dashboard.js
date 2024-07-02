@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Image, ScrollView, TouchableOpacity, Modal, Alert, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,6 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider'; // Slider component
 import { FontAwesome } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
+import axios from 'axios';
+import { base_url } from '../constants/baseUrl';
 
 export default function DashboardScreen() {
     const [modalVisible, setModalVisible] = useState(false);
@@ -14,6 +16,7 @@ export default function DashboardScreen() {
     const [heightRange, setHeightRange] = useState([4, 5.5]);
     const navigation = useNavigation();
     const { width: viewportWidth } = Dimensions.get('window');
+    const [profileData, setProfileData] = useState(null);
 
     const handleLogout = async () => {
         await AsyncStorage.clear();
@@ -36,6 +39,35 @@ export default function DashboardScreen() {
     const dashboardBg = Asset.fromModule(require('../assets/dash-bg.png')).uri;
     const mubeen = Asset.fromModule(require('../assets/mubeen.jpeg')).uri;
     const aleezy = Asset.fromModule(require('../assets/aleezy.jpeg')).uri;
+    
+    
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                const userId = await AsyncStorage.getItem('userId');
+                const userToken = await AsyncStorage.getItem('userToken');
+
+                const response = await axios.get(`${base_url}/api/profile/${userId}`, {
+                    headers: {
+                    'Authorization': `Bearer ${userToken}`,
+                    'Content-Type': 'application/json'
+                    }
+                }).then((res)=> {
+                
+                    setProfileData(res.data?.data[0]);
+                }).catch(async(err)=> {
+                    if(err?.response?.data?.message == "Invalid/Expired token."){
+                        await AsyncStorage.clear()
+                        navigation.navigate('LoginScreen')
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            }
+        };
+    
+        fetchProfileData();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -49,7 +81,7 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.greeting}>
                 {/* <Image source={{uri: dashboardBg}} style={styles.greetingImage} /> */}
-                <Text style={styles.greetingText}>Hello, Salman!</Text>
+                <Text style={styles.greetingText}>Hello, {profileData?.firstName}!</Text>
             </View>
             <View style={styles.searchContainer}>
                 <Ionicons name="search" size={20} color="black" />
@@ -63,24 +95,24 @@ export default function DashboardScreen() {
                 </TouchableOpacity>
             </View>
             <View style={styles.nearYouHeader}>
-                <Text style={styles.nearYou}>Near You</Text>
+                <Text onPress={() => navigation.navigate('NearMe')} style={styles.nearYou}>Near You</Text>
                 <Text onPress={() => navigation.navigate('Matches')} style={styles.viewAll}>View all</Text>
             </View>
             <ScrollView style={styles.scrollView}>
-                <View style={styles.card}>
-                    <Image style={styles.profileImage} source={{ uri: aleezy }} />
-                    <View style={styles.textOverlay}>
-                        <Text style={styles.name}>Aleezy Shah</Text>
-                        <Text style={styles.location}>Pakistan, Lahore</Text>
-                        <Text style={styles.occupation}>Actress</Text>
-                    </View>
+            <View style={styles.card}>
+                <Image style={styles.profileImage} source={{ uri: `${base_url}/uploads/${profileData?.image}` }} />
+                <View style={styles.textOverlay}>
+                    <Text style={styles.name}>{profileData?.firstName}</Text>
+                    <Text style={styles.location}>{profileData?.city}, Pakistan</Text>
+                    <Text style={styles.occupation}>{profileData?.occupation}</Text>
                 </View>
+            </View>
                 {/* Add more cards here if needed */}
             </ScrollView>
             <View style={styles.footer}>
                 <Ionicons name="home" size={30} color="maroon" />
                 <Ionicons name="heart" size={30} color="maroon" />
-                <Ionicons onPress={() => navigation.navigate('Chat')} name="chatbubbles-outline" size={30} color="black" />
+                <Ionicons onPress={() => navigation.navigate('Message')} name="chatbubbles-outline" size={30} color="black" />
                 <Ionicons onPress={() => navigation.navigate('Profile')} name="person-outline" size={30} color="black" />
             </View>
 

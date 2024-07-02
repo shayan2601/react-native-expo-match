@@ -14,9 +14,11 @@ export default function App() {
   const [confirmPassword, setConfirmPassword] = useState({ value: '', error: '' });
   const [phoneNumber, setPhoneNumber] = useState({ value: '', error: '' });
   const [dob, setDob] = useState({ value: '', error: '' });
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [height, setHeight] = useState({ value: '', error: '' });
-  const [country, setCountry] = useState({ value: '', error: '' });
-  const [gender, setGender] = useState({ value: '', error: '' });
+  // const [country, setCountry] = useState({ value: '', error: '' });
+  // const [gender, setGender] = useState({ value: '', error: '' });
   const [address, setAddress] = useState({ value: '', error: '' });
   const [city, setCity] = useState(null);
   const [open, setOpen] = useState(false);
@@ -32,22 +34,57 @@ export default function App() {
     { label: 'Okara', value: 'okara' }
   ]);
 
+
+  const [country, setCountry] = useState(null);
+  const [openCountry, setOpenCountry] = useState(false);
+  const [itemsCountry, setItemsCountry] = useState([
+    { label: 'Pakistan', value: 'pakistan' },
+    { label: 'India', value: 'india' },
+    { label: 'China', value: 'china' },
+    { label: 'Bangladesh', value: 'bangladesh' },
+    { label: 'Nepal', value: 'nepal' },
+  ]);
+
+  const [gender, setGender] = useState(null);
+  const [openGender, setOpenGender] = useState(false);
+  const [itemsGender, setItemsGender] = useState([
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' },
+  ]);
+
+
   const navigation = useNavigation();
 
   const onNextPressed = async () => {
     const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
-    const confirmPasswordError = passwordValidator(confirmPassword.value);
+    const passwordValidationError = validatePassword(password.value);
+    console.log("passwordValidationError: ", passwordValidationError)
+    // const passwordError = passwordValidator(password.value);
+    // const confirmPasswordError = passwordValidator(confirmPassword.value);
     const firstNameError = nameValidator(firstName.value);
     const lastNameError = nameValidator(lastName.value);
     const nickNameError = nameValidator(nickName.value);
     const phoneNumberError = nameValidator(phoneNumber.value);
     const dobError = nameValidator(dob.value);
     const heightError = nameValidator(height.value);
-    const countryError = nameValidator(country.value);
-    const genderError = nameValidator(gender.value);
+    const countryError = nameValidator(country);
+    const genderError = nameValidator(gender);
     const addressError = nameValidator(address.value);
     const cityError = city ? '' : 'Input cannot be empty';
+
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
+      setConfirmPasswordError("");
+      return
+    } else if (password.value !== confirmPassword.value) {
+      setPasswordError("");
+      setConfirmPasswordError("Passwords do not match.");
+      return
+    } else {
+      setPasswordError("");
+      setConfirmPasswordError("");
+      // Proceed with form submission
+    }
 
     if (emailError || passwordError || firstNameError || lastNameError || nickNameError || confirmPasswordError || phoneNumberError || dobError || heightError || countryError || genderError || addressError || cityError) {
       return Toast.show({
@@ -70,8 +107,8 @@ export default function App() {
       phoneNumber: phoneNumber.value,
       dob: dob.value,
       height: height.value,
-      country: country.value,
-      gender: gender.value,
+      country: country,
+      gender: gender,
       address: address.value,
       city: city
     }));
@@ -83,16 +120,19 @@ export default function App() {
     setter({ value: text, error: '' });
   };
 
-  const renderInput = (placeholder, value, onChangeText, secureTextEntry = false, keyboardType = 'default') => (
-    <TextInput
-      style={styles.input}
-      placeholder={placeholder}
-      placeholderTextColor="#000"
-      value={value}
-      onChangeText={onChangeText}
-      secureTextEntry={secureTextEntry}
-      keyboardType={keyboardType}
-    />
+  const renderInput = (placeholder, value, onChangeText, secureTextEntry = false, keyboardType = 'default', error = '') => (
+    
+        <TextInput
+          style={[styles.input, error ? styles.inputError : null]}
+          placeholder={placeholder}
+          placeholderTextColor="#000"
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType}
+          
+        />
+  
   );
 
   return (
@@ -114,21 +154,45 @@ export default function App() {
             
             {renderInput("Nick Name", nickName.value, handleChange(setNickName))}
             {renderInput("Email", email.value, handleChange(setEmail))}
-            
+            <DropDownPicker
+                open={openGender}
+                value={gender}
+                items={itemsGender}
+                setOpen={setOpenGender}
+                setValue={setGender}
+                setItems={setItemsGender}
+                placeholder="Select your Gender"
+                style={styles.picker}
+                containerStyle={styles.pickerContainer}
+              />
             <View style={styles.inputHalfContainer}>
-              {renderInput("Password", password.value, handleChange(setPassword), true)}
-              {renderInput("Confirm Password", confirmPassword.value, handleChange(setConfirmPassword), true)}
+              {renderInput("Password", password.value, handleChange(setPassword), true, 'default', passwordError)}
+              {renderInput("Confirm Password", confirmPassword.value, handleChange(setConfirmPassword), true, 'default', confirmPasswordError)}
             </View>
-
-            {renderInput("Contact Number", phoneNumber.value, handleChange(setPhoneNumber), false, "phone-pad")}
+            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
             
+
+            {renderInput("+923227889043", phoneNumber.value, handleChange(setPhoneNumber), false, "phone-pad")}
+            <DropDownPicker
+                open={openCountry}
+                value={country}
+                items={itemsCountry}
+                setOpen={setOpenCountry}
+                setValue={setCountry}
+                setItems={setItemsCountry}
+                placeholder="Select your Country"
+                style={styles.picker}
+                containerStyle={styles.pickerContainer}
+              />
             <View style={styles.inputHalfContainer}>
               {renderInput("DOB", dob.value, handleChange(setDob))}
-              {renderInput("Gender", gender.value, handleChange(setGender))}
+              
+              {/* {renderInput("Gender", gender.value, handleChange(setGender))} */}
             </View>
             
             <View style={styles.inputHalfContainer}>
-              {renderInput("Country", country.value, handleChange(setCountry))}
+            
+              {/* {renderInput("Country", country.value, handleChange(setCountry))} */}
               {renderInput("Height", height.value, handleChange(setHeight))}
             </View>
             
@@ -218,6 +282,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  inputError: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 4,
+  },
 });
 
 const emailValidator = (email) => {
@@ -234,4 +307,23 @@ const passwordValidator = (password) => {
 const nameValidator = (name) => {
   if (!name) return 'Input cannot be empty';
   return '';
+};
+
+
+const validatePassword = (password) => {
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+  if (!hasUpperCase) {
+    return "Password must contain at least one uppercase letter.";
+  }
+  if (!hasNumber) {
+    return "Password must contain at least one number.";
+  }
+  if (!hasSpecialChar) {
+    return "Password must contain at least one special character.";
+  }
+
+  return "";
 };
