@@ -77,7 +77,7 @@ export default function DashboardScreen() {
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
                     <Ionicons name="menu" size={24} color="black" />
                 </TouchableOpacity>
-                <Ionicons name="notifications-outline" size={24} color="black" />
+                {/* <Ionicons name="notifications-outline" size={24} color="black" /> */}
             </View>
             <View style={styles.greeting}>
                 {/* <Image source={{uri: dashboardBg}} style={styles.greetingImage} /> */}
@@ -95,7 +95,7 @@ export default function DashboardScreen() {
                 </TouchableOpacity>
             </View>
             <View style={styles.nearYouHeader}>
-                <Text onPress={() => navigation.navigate('NearMe')} style={styles.nearYou}>Near You</Text>
+                {/* <Text onPress={() => navigation.navigate('NearMe')} style={styles.nearYou}>.</Text> */}
                 <Text onPress={() => navigation.navigate('Matches')} style={styles.viewAll}>View all</Text>
             </View>
             <ScrollView style={styles.scrollView}>
@@ -103,7 +103,7 @@ export default function DashboardScreen() {
                 <Image style={styles.profileImage} source={{ uri: `${base_url}/uploads/${profileData?.image}` }} />
                 <View style={styles.textOverlay}>
                     <Text style={styles.name}>{profileData?.firstName}</Text>
-                    <Text style={styles.location}>{profileData?.city}, Pakistan</Text>
+                    <Text style={styles.location}> Pakistan</Text>
                     <Text style={styles.occupation}>{profileData?.occupation}</Text>
                 </View>
             </View>
@@ -111,7 +111,7 @@ export default function DashboardScreen() {
             </ScrollView>
             <View style={styles.footer}>
                 <Ionicons name="home" size={30} color="maroon" />
-                <Ionicons name="heart" size={30} color="maroon" />
+                {/* <Ionicons name="heart" size={30} color="maroon" /> */}
                 <Ionicons onPress={() => navigation.navigate('Message')} name="chatbubbles-outline" size={30} color="black" />
                 <Ionicons onPress={() => navigation.navigate('Profile')} name="person-outline" size={30} color="black" />
             </View>
@@ -255,6 +255,9 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     viewAll: {
+        alignSelf: 'flex-end',
+        textAlign: 'right',
+        flex: 1,
         fontSize: 14,
         color: '#9B2242',
     },

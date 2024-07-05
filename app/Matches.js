@@ -130,6 +130,7 @@ const App = () => {
                     placeholderTextColor="#000" 
                     style={styles.searchInput} 
                     placeholder="Search for partner" 
+                    onPressIn={() => setFilterModalVisible(true)}
                 />
                 <TouchableOpacity onPress={() => setFilterModalVisible(true)}>
                     <FontAwesome name="filter" size={24} color="white" />

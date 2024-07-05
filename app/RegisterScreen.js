@@ -15,6 +15,8 @@ export default function App() {
   const [phoneNumber, setPhoneNumber] = useState({ value: '', error: '' });
   const [dob, setDob] = useState({ value: '', error: '' });
   const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [height, setHeight] = useState({ value: '', error: '' });
   // const [country, setCountry] = useState({ value: '', error: '' });
@@ -58,9 +60,10 @@ export default function App() {
   const onNextPressed = async () => {
     const emailError = emailValidator(email.value);
     const passwordValidationError = validatePassword(password.value);
+    const emailValidationError = validateEmail(email.value);
+    const phoneValidationError = validatePhone(phoneNumber.value);
     console.log("passwordValidationError: ", passwordValidationError)
-    // const passwordError = passwordValidator(password.value);
-    // const confirmPasswordError = passwordValidator(confirmPassword.value);
+
     const firstNameError = nameValidator(firstName.value);
     const lastNameError = nameValidator(lastName.value);
     const nickNameError = nameValidator(nickName.value);
@@ -84,6 +87,19 @@ export default function App() {
       setPasswordError("");
       setConfirmPasswordError("");
       // Proceed with form submission
+    }
+
+    if(emailValidationError){
+      setEmailError(emailValidationError)
+      return
+    }else{
+      setEmailError("")
+    }
+    if(phoneValidationError){
+      setPhoneError(phoneValidationError)
+      return
+    }else{
+      setPhoneError("")
     }
 
     if (emailError || passwordError || firstNameError || lastNameError || nickNameError || confirmPasswordError || phoneNumberError || dobError || heightError || countryError || genderError || addressError || cityError) {
@@ -154,6 +170,7 @@ export default function App() {
             
             {renderInput("Nick Name", nickName.value, handleChange(setNickName))}
             {renderInput("Email", email.value, handleChange(setEmail))}
+            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
             <DropDownPicker
                 open={openGender}
                 value={gender}
@@ -173,6 +190,7 @@ export default function App() {
             
 
             {renderInput("+923227889043", phoneNumber.value, handleChange(setPhoneNumber), false, "phone-pad")}
+            {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
             <DropDownPicker
                 open={openCountry}
                 value={country}
@@ -323,6 +341,28 @@ const validatePassword = (password) => {
   }
   if (!hasSpecialChar) {
     return "Password must contain at least one special character.";
+  }
+
+  return "";
+};
+
+const validateEmail = (email) => {
+  // Regular expression for validating email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  if (!emailRegex.test(email)) {
+    return "Invalid email format.";
+  }
+
+  return "";
+};
+
+const validatePhone = (phone) => {
+  // Regular expression for validating phone number format
+  const phoneRegex = /^\+92\d{10}$/;
+
+  if (!phoneRegex.test(phone)) {
+    return "Phone number must start with +92 and be followed by 10 digits.";
   }
 
   return "";
